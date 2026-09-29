@@ -45,16 +45,17 @@
         (function () {
             var d = document.documentElement;
             d.classList.add('js');
-            // Style: ?theme=navy|black|white|violet|graphite|plum|lilac|ice in the URL wins (handy for sharing), otherwise the last choice.
+            // Style: ?theme=black|violet in the URL wins (handy for sharing), otherwise the last choice. Black is the default.
             try {
-                var styles = ['navy', 'black', 'white', 'violet', 'graphite', 'plum', 'lilac', 'ice'];
+                var styles = ['black', 'violet'];
                 var q = new URLSearchParams(location.search).get('theme');
                 if (styles.indexOf(q) < 0) q = null;
                 if (q) localStorage.setItem('equinox-theme', q);
                 var t = q || localStorage.getItem('equinox-theme');
-                if (t && t !== 'navy' && styles.indexOf(t) >= 0) d.dataset.theme = t;
-                if (t === 'white' || t === 'lilac' || t === 'ice') d.dataset.tone = 'light';
-            } catch (e) {}
+                d.dataset.theme = styles.indexOf(t) >= 0 ? t : 'black';
+            } catch (e) {
+                d.dataset.theme = 'black';
+            }
         })();
     </script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -162,6 +163,7 @@
 
             <h1 class="hero__title">
                 <span class="sr-only">EQUINOX</span>
+                <span class="hero__mark" aria-hidden="true">{!! file_get_contents(resource_path('svg/logo-mark.svg')) !!}</span>
                 <span class="hero__wordmark" aria-hidden="true">{!! $heroWordmark !!}</span>
             </h1>
             <p class="hero__tagline intro" style="--d: .35s">Where space meets at the equator</p>
@@ -358,6 +360,42 @@
         </div>
     </section>
 
+    {{-- ============ 06B · THE VENUES ============ --}}
+    <section class="section venue" id="venue">
+        <div class="container">
+            <p class="eyebrow reveal">Where it happens</p>
+            <h2 class="display reveal">Two places. <em>Zero latitude.</em></h2>
+
+            <div class="venue-group reveal">
+                <div class="venue-group__head">
+                    <h3>UDLA Park</h3>
+                    <p class="exp__meta"><span><x-icon name="pin" /> Quito, Ecuador</span> <span><x-icon name="calendar" /> March 16–18</span></p>
+                </div>
+                <div class="venue-photos">
+                    <img class="venue-photo" src="{{ asset('img/venue-udla-1.jpg') }}" alt="UDLA Park campus in Quito, aerial view" loading="lazy">
+                    <img class="venue-photo" src="{{ asset('img/venue-udla-2.jpg') }}" alt="Auditorium at UDLA Park during a conference" loading="lazy">
+                    <img class="venue-photo" src="{{ asset('img/venue-udla-3.jpg') }}" alt="UDLA Park glass architecture" loading="lazy">
+                </div>
+            </div>
+
+            <div class="venue-group reveal">
+                <div class="venue-group__head">
+                    <h3>The Stargate</h3>
+                    <p class="exp__meta"><span><x-icon name="pin" /> Urcuquí, Ecuador</span> <span><x-icon name="calendar" /> March 19</span></p>
+                </div>
+                <div class="venue-photos">
+                    <img class="venue-photo" src="{{ asset('img/venue-stargate-1.jpg') }}" alt="Astralintu team on site at the Stargate construction" loading="lazy">
+                    <img class="venue-photo" src="{{ asset('img/venue-stargate-2.jpg') }}" alt="Stargate teleport structure under construction" loading="lazy">
+                    <img class="venue-photo" src="{{ asset('img/venue-stargate-3.jpg') }}" alt="Stargate site foundation, aerial view" loading="lazy">
+                </div>
+            </div>
+
+            <button type="button" class="link-arrow venue__map-link" data-open-map aria-haspopup="dialog" aria-controls="modal-map">
+                See both venues on the map <x-icon name="arrow-right" />
+            </button>
+        </div>
+    </section>
+
     {{-- ============ 07 · CONFERENCE THEMES ============ --}}
     <section class="section themes" id="themes">
         <div class="sky sky--themes" data-depth=".3" aria-hidden="true">@include('partials.sky', ['kind' => 'ringed'])</div>
@@ -536,22 +574,6 @@
                 <svg class="dock__glyph" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23 6.2 16.6 7a3 3 0 0 0-5.4 1.3L3.5 3c1 3.9 2.8 6.6 5.2 8-1.8 1.8-3.9 4.9-5.6 9.8 3-2.4 5.8-3.9 8-4.6 2.8-1 4.6-3.3 4.7-6.1l.1-1.2Z"/></svg>
                 Hummingbird
             </button>
-            <button type="button" data-companion-set="moon" aria-pressed="false" aria-label="A little moon orbits the cursor">
-                <svg class="dock__glyph" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1Z"/></svg>
-                Moon
-            </button>
-            <button type="button" data-companion-set="satellite" aria-pressed="false" aria-label="Satellite orbits the cursor">
-                <svg class="dock__glyph" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="9" y="8.5" width="6" height="7" rx="1.2"/><rect x="1.5" y="9.5" width="6" height="5" rx=".8"/><rect x="16.5" y="9.5" width="6" height="5" rx=".8"/><path d="M12 8.5V5" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="4" r="1.3"/></svg>
-                Satellite
-            </button>
-            <button type="button" data-companion-set="comet" aria-pressed="false" aria-label="Comet follows the cursor">
-                <svg class="dock__glyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="16.5" cy="7.5" r="3.6" fill="currentColor"/><path d="M13.8 10.2 3.5 20.5M11 7.5 5 13.5M16.5 13 10.5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".55"/></svg>
-                Comet
-            </button>
-            <button type="button" data-companion-set="booby" aria-pressed="false" aria-label="Blue-footed booby from the Galápagos follows the cursor">
-                <svg class="dock__glyph" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M1.5 12.2c3-.9 6.3-.6 8.8 1l2.3-2.6c2.6-1.6 6-2.2 9.9-1.6-2.9.8-5.5 2.4-7.4 4.5l-1.6 2.9H9.9l-1.4-2.3c-2.2-1.4-4.5-2-7-1.9Z"/><path d="M8.5 16.5 6.5 19.5M10.5 16.5 9.5 20" stroke="#3FB2F0" stroke-width="1.8" stroke-linecap="round"/></svg>
-                Galápagos
-            </button>
             <button type="button" data-companion-set="off" aria-pressed="false" aria-label="No cursor companion">
                 <svg class="dock__glyph" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="m6.5 6.5 11 11"/></svg>
                 Off
@@ -559,9 +581,9 @@
         </div>
         <div class="theme-switch style-switch" role="group" aria-label="Page style">
             <span class="theme-switch__label">Style</span>
-            <span class="theme-switch__current" data-theme-name>Navy</span>
-            @foreach (['navy' => 'Navy', 'black' => 'Black', 'white' => 'White', 'violet' => 'Violet', 'graphite' => 'Graphite', 'plum' => 'Plum', 'lilac' => 'Lilac', 'ice' => 'Ice'] as $key => $name)
-                <button type="button" data-theme-set="{{ $key }}" data-theme-label="{{ $name }}" aria-pressed="{{ $key === 'navy' ? 'true' : 'false' }}" aria-label="{{ $name }} style" title="{{ $name }}">
+            <span class="theme-switch__current" data-theme-name>Black</span>
+            @foreach (['black' => 'Black', 'violet' => 'Violet'] as $key => $name)
+                <button type="button" data-theme-set="{{ $key }}" data-theme-label="{{ $name }}" aria-pressed="{{ $key === 'black' ? 'true' : 'false' }}" aria-label="{{ $name }} style" title="{{ $name }}">
                     <span class="theme-switch__swatch theme-switch__swatch--{{ $key }}"></span> {{ $name }}
                 </button>
             @endforeach

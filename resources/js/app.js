@@ -16,19 +16,12 @@ Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => set
 /* ---------- Style switcher ---------- */
 const themeButtons = [...document.querySelectorAll('[data-theme-set]')];
 const themeMeta = document.querySelector('meta[name="theme-color"]');
-const themeColors = {
-    navy: '#0E1540', black: '#08080A', white: '#FFFFFF', violet: '#140A2C',
-    graphite: '#15161B', plum: '#1A0A18', lilac: '#FBF6FD', ice: '#F5F8FF',
-};
-const lightThemes = ['white', 'lilac', 'ice'];
+const themeColors = { black: '#08080A', violet: '#140A2C' };
 const themeName = document.querySelector('[data-theme-name]');
 
 function applyTheme(theme) {
-    if (!(theme in themeColors)) theme = 'navy';
-    if (theme === 'navy') delete root.dataset.theme;
-    else root.dataset.theme = theme;
-    if (lightThemes.includes(theme)) root.dataset.tone = 'light';
-    else delete root.dataset.tone;
+    if (!(theme in themeColors)) theme = 'black';
+    root.dataset.theme = theme;
     themeButtons.forEach((b) => {
         const active = b.dataset.themeSet === theme;
         b.setAttribute('aria-pressed', String(active));
@@ -39,12 +32,12 @@ function applyTheme(theme) {
         localStorage.setItem('equinox-theme', theme);
     } catch {}
 }
-applyTheme(root.dataset.theme || 'navy');
+applyTheme(root.dataset.theme || 'black');
 
 themeButtons.forEach((button) => {
     button.addEventListener('click', () => {
         const theme = button.dataset.themeSet;
-        if ((root.dataset.theme || 'navy') === theme) return;
+        if ((root.dataset.theme || 'black') === theme) return;
         if (!document.startViewTransition || reduceMotion) {
             applyTheme(theme);
             return;

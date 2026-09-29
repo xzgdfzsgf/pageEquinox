@@ -545,8 +545,10 @@ body::after {
     font-family: var(--font-mono); font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-2);
 }
 .hero__meta span { display: inline-flex; align-items: center; gap: 8px; }
-.hero__title { margin: 0; }
-.hero__wordmark { display: block; width: min(640px, 86vw); color: var(--text); filter: drop-shadow(0 0 40px rgba(233, 196, 244, .25)); }
+.hero__title { margin: 0; display: flex; align-items: center; gap: clamp(10px, 1.6vw, 22px); }
+.hero__mark { flex: none; width: clamp(52px, 7vw, 96px); color: var(--accent); filter: drop-shadow(0 0 30px rgba(233, 196, 244, .3)); }
+.hero__wordmark { display: block; width: min(640px, 78vw); color: var(--text); filter: drop-shadow(0 0 40px rgba(233, 196, 244, .25)); }
+@media (max-width: 560px) { .hero__title { gap: 10px; } }
 .hero__tagline {
     margin-top: 18px; font-family: var(--font-display); font-weight: 500;
     font-size: clamp(1.05rem, .8rem + 1.2vw, 1.6rem); letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
@@ -689,6 +691,29 @@ body::after {
 .exp__body .link-arrow { margin-top: auto; padding-top: 22px; }
 .exp--stargate { border-color: rgba(233, 196, 244, .28); }
 @media (max-width: 860px) { .experiences { grid-template-columns: 1fr; } }
+
+/* 06B Venues */
+.venue-group { margin-top: clamp(40px, 5vw, 64px); }
+.venue-group:first-of-type { margin-top: clamp(36px, 5vw, 56px); }
+.venue-group__head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 18px; }
+.venue-group__head h3 { font-family: var(--font-display); font-size: clamp(1.3rem, 1.1rem + .7vw, 1.7rem); font-weight: 600; letter-spacing: -.01em; }
+.venue-group__head .exp__meta { margin: 0; }
+.venue-photos {
+    display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: repeat(2, 1fr);
+    gap: 14px; aspect-ratio: 16 / 7.5;
+}
+.venue-photo {
+    width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-sm);
+    border: 1px solid var(--line); transition: transform .6s var(--ease);
+}
+.venue-photo:hover { transform: scale(1.02); }
+.venue-photo:first-child { grid-row: span 2; }
+.venue__map-link { margin-top: clamp(32px, 4vw, 48px); background: none; border: none; cursor: pointer; font: inherit; padding: 0; }
+@media (max-width: 760px) {
+    .venue-photos { grid-template-columns: 1fr; grid-template-rows: none; aspect-ratio: auto; }
+    .venue-photo { aspect-ratio: 4 / 3; }
+    .venue-photo:first-child { grid-row: auto; }
+}
 
 /* 07 Themes */
 .theme-list { margin-top: clamp(36px, 5vw, 56px); border-top: 1px solid var(--line); counter-reset: none; }
