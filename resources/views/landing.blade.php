@@ -372,18 +372,21 @@
                         <p class="exp__kicker">Venue 01</p>
                         <h3>UDLA Park</h3>
                     </div>
-                    <p class="exp__meta"><span><x-icon name="pin" /> Quito, Ecuador</span> <span><x-icon name="calendar" /> March 16–18</span></p>
+                    <p class="exp__meta"><span><x-icon name="pin" /> Quito, Ecuador</span> <span><x-icon name="calendar" /> March 16–18</span> <span class="venue-coord">0°13′S · 78°31′W</span></p>
                 </div>
                 <div class="venue-photos">
                     <div class="venue-frame venue-frame--hero">
                         <img class="venue-photo" src="{{ asset('img/venue-udla-1.jpg') }}" alt="UDLA Park campus in Quito, aerial view" loading="lazy">
                         <span class="venue-photos__num" aria-hidden="true">01</span>
+                        <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-udla-2.jpg') }}" alt="Auditorium at UDLA Park during a conference" loading="lazy">
+                        <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-udla-3.jpg') }}" alt="UDLA Park glass architecture" loading="lazy">
+                        <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                 </div>
             </div>
@@ -394,18 +397,21 @@
                         <p class="exp__kicker">Venue 02</p>
                         <h3>The Stargate</h3>
                     </div>
-                    <p class="exp__meta"><span><x-icon name="pin" /> Urcuquí, Ecuador</span> <span><x-icon name="calendar" /> March 19</span></p>
+                    <p class="exp__meta"><span><x-icon name="pin" /> Urcuquí, Ecuador</span> <span><x-icon name="calendar" /> March 19</span> <span class="venue-coord">0°23′N · 78°11′W</span></p>
                 </div>
                 <div class="venue-photos">
                     <div class="venue-frame venue-frame--hero">
                         <img class="venue-photo" src="{{ asset('img/venue-stargate-1.jpg') }}" alt="Astralintu team on site at the Stargate construction" loading="lazy">
                         <span class="venue-photos__num" aria-hidden="true">02</span>
+                        <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-stargate-2.jpg') }}" alt="Stargate teleport structure under construction" loading="lazy">
+                        <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-stargate-3.jpg') }}" alt="Stargate site foundation, aerial view" loading="lazy">
+                        <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                 </div>
             </div>
