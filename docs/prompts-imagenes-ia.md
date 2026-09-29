@@ -17,7 +17,7 @@ Modern conference auditorium in Quito prepared for an international space econom
 a wide LED screen showing an abstract orbital graphic, navy and lilac stage lighting, audience silhouettes from
 behind, premium and institutional atmosphere. *(Si hay fotos reales de UDLA Park en la presentación, usar esas.)*
 
-## stargate.jpg — The Stargate Experience, Urcuquí (1600×1000)
+## stargate.jpg — The Stargate Inauguration, Urcuquí (1600×1000)
 Large satellite ground station antennas (teleport) at dusk in the green Andean highlands of Urcuquí, Ecuador,
 equator marker monument nearby, dramatic twilight sky turning navy with first stars, lilac rim light on the
 dishes. *(Priorizar el material real de Astralintu/Stargate de la presentación.)*

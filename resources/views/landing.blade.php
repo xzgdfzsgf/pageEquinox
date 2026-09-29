@@ -347,7 +347,7 @@
                         <span class="exp__num">02</span>
                     </div>
                     <div class="exp__body">
-                        <h3>The Stargate Experience</h3>
+                        <h3>The Stargate Inauguration</h3>
                         <p class="exp__meta"><span><x-icon name="calendar" /> March 19</span> <span><x-icon name="pin" /> Urcuquí, 0°00′ latitude</span></p>
                         <p class="exp__kicker">From conversation to infrastructure.</p>
                         <p>
@@ -639,7 +639,7 @@
         <p class="map-swipe" aria-hidden="true">← Swipe to see the Galápagos Islands</p>
         <ul class="map-legend">
             <li><span class="map-legend__dot map-legend__dot--conference"></span><span><strong>The Conference</strong> UDLA Park, Quito · March 16–18</span></li>
-            <li><span class="map-legend__dot map-legend__dot--stargate"></span><span><strong>The Stargate Experience</strong> Urcuquí, ≈ 75 km north-east of Quito · March 19</span></li>
+            <li><span class="map-legend__dot map-legend__dot--stargate"></span><span><strong>The Stargate Inauguration</strong> Urcuquí, ≈ 75 km north-east of Quito · March 19</span></li>
             <li><span class="map-legend__line"></span><span><strong>0° latitude</strong> The equator crosses Ecuador just north of Quito</span></li>
         </ul>
     </div>

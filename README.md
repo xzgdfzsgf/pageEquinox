@@ -59,7 +59,7 @@ with these names and they are picked up automatically:
 |---|---|---|
 | `hero.jpg` | Hero background (under a Navy Profundo overlay) | 2400×1400 |
 | `conference.jpg` | "The Conference" card (UDLA Park) | 1600×1000 |
-| `stargate.jpg` | "The Stargate Experience" card | 1600×1000 |
+| `stargate.jpg` | "The Stargate Inauguration" card | 1600×1000 |
 | `og.jpg` | Preview image when the link is shared | 1200×630 |
 
 ## Deployment (production)
