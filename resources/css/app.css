@@ -747,11 +747,11 @@ body::after {
 .venue-frame--hero { grid-row: span 2; }
 
 .venue-photos__num {
-    position: absolute; z-index: 2; left: 22px; bottom: 14px; pointer-events: none;
+    position: absolute; z-index: 4; left: 22px; bottom: 14px; pointer-events: none;
     font-family: var(--font-display); font-size: 3.4rem; font-weight: 600; line-height: 1; color: #E9C4F4;
 }
 .venue-frame__caption {
-    position: absolute; z-index: 2; left: 16px; right: 16px; bottom: 12px; pointer-events: none;
+    position: absolute; z-index: 4; left: 16px; right: 16px; bottom: 12px; pointer-events: none;
     font-family: var(--font-mono); font-size: .72rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text);
     opacity: 0; transform: translateY(6px); transition: opacity .4s var(--ease), transform .4s var(--ease);
 }
@@ -763,14 +763,23 @@ body::after {
 }
 .venue-frame:hover .venue-photo { transform: scale(1.035); filter: brightness(1.03) saturate(1.08); }
 
-/* The moving light: a soft diagonal beam that sweeps across the frame on hover, like .btn--primary's shine */
+/* The moving light: a soft beam that actually lights the photo (overlay blend + blur) rather than
+   a flat white bar drawn on top of it — and it sits above the scrim so it doesn't get muddied. */
 .venue-frame__shine {
-    position: absolute; z-index: 1; top: -60%; left: -35%; width: 26%; height: 220%; pointer-events: none;
-    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .45), transparent);
-    transform: skewX(-20deg) translateX(-110%);
-    transition: transform 1.2s cubic-bezier(.2, .7, .2, 1);
+    position: absolute; z-index: 3; top: -30%; left: -45%; width: 34%; height: 180%; pointer-events: none;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .9), transparent);
+    filter: blur(9px);
+    mix-blend-mode: overlay;
+    opacity: 0;
+    transform: skewX(-18deg) translateX(-30%);
 }
-.venue-frame:hover .venue-frame__shine { transform: skewX(-20deg) translateX(520%); }
+.venue-frame:hover .venue-frame__shine { animation: venue-shine 1.3s cubic-bezier(.3, .1, .3, 1); }
+@keyframes venue-shine {
+    0% { opacity: 0; transform: skewX(-18deg) translateX(-30%); }
+    15% { opacity: 1; }
+    60% { opacity: .8; }
+    100% { opacity: 0; transform: skewX(-18deg) translateX(340%); }
+}
 
 .venue__cta { display: flex; justify-content: center; margin-top: clamp(40px, 5vw, 60px); }
 
@@ -786,7 +795,7 @@ body::after {
     .venue-frame--hero:hover::after { opacity: 1; }
     .venue-frame:hover .venue-photo { transform: none; filter: brightness(.9) saturate(1.03); }
     .venue-frame:hover .venue-frame__caption { opacity: 0; transform: translateY(6px); }
-    .venue-frame:hover .venue-frame__shine { transform: skewX(-20deg) translateX(-110%); }
+    .venue-frame:hover .venue-frame__shine { animation: none; opacity: 0; }
 }
 
 /* 07 Themes */
