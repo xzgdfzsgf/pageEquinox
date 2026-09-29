@@ -1,0 +1,506 @@
+/* ==========================================================================
+   Depth — elevation, lighting, 3D tilt, planets — plus the review dock and cursor companions.
+   Loaded after app.css and motion.css.
+   ========================================================================== */
+
+:root {
+    --elev-1: inset 0 1px 0 rgba(255, 255, 255, .07), 0 18px 40px -22px rgba(0, 0, 0, .75);
+    --elev-2: inset 0 1px 0 rgba(255, 255, 255, .09), 0 34px 70px -30px rgba(0, 0, 0, .9);
+    --elev-hover: inset 0 1px 0 rgba(255, 255, 255, .12), 0 44px 80px -34px rgba(0, 0, 0, .95), 0 26px 60px -32px rgba(169, 121, 217, .6);
+    --sheen: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, 0) 42%);
+    --btn-sheen: linear-gradient(180deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0) 62%);
+    --heading-shadow: 0 14px 44px rgba(0, 0, 0, .45);
+    --planet-a: #F3DDF9; --planet-b: #A979D9; --planet-c: #2C1F63; --planet-night: #05061A;
+    --horizon-fill: #0B1038;
+    --horizon-edge: rgba(233, 196, 244, .95);
+    --horizon-glow: rgba(169, 121, 217, .55);
+    --band: rgba(var(--deep-rgb), .55);
+}
+:root { --sun-core: #FFF1F8; }
+:root[data-tone="light"] { --sun-core: #F4A6CD; }
+:root[data-theme="black"] {
+    --planet-c: #221736; --planet-night: #000;
+    --horizon-fill: #050507;
+}
+:root[data-theme="violet"] {
+    --planet-c: #3B1F72; --planet-night: #07031A;
+    --horizon-fill: #0E0724;
+}
+:root[data-tone="light"] {
+    --elev-1: 0 1px 2px rgba(14, 21, 64, .06), 0 16px 36px -18px rgba(14, 21, 64, .22);
+    --elev-2: 0 2px 4px rgba(14, 21, 64, .05), 0 30px 64px -30px rgba(14, 21, 64, .3);
+    --elev-hover: 0 2px 6px rgba(14, 21, 64, .06), 0 40px 76px -32px rgba(123, 69, 184, .38);
+    --sheen: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 60%);
+    --btn-sheen: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 60%);
+    --heading-shadow: none;
+    --planet-a: #EBD9FA; --planet-b: #9D6BD6; --planet-c: #3A2A78; --planet-night: #1A1447;
+    --horizon-fill: #F1ECF9;
+    --horizon-edge: rgba(123, 69, 184, .65);
+    --horizon-glow: rgba(157, 107, 214, .35);
+    --band: rgba(var(--deep-rgb), .8);
+}
+
+:root[data-theme="graphite"] { --planet-c: #2A2338; --planet-night: #06060A; --horizon-fill: #0E0F13; }
+:root[data-theme="plum"] {
+    --planet-c: #4A1A48; --planet-night: #0A0209; --horizon-fill: #13060F;
+    --horizon-glow: rgba(214, 100, 180, .5);
+}
+:root[data-theme="lilac"] { --horizon-fill: #EFE3F6; }
+:root[data-theme="ice"] {
+    --horizon-fill: #E6EDFC;
+    --horizon-edge: rgba(62, 79, 146, .55);
+    --horizon-glow: rgba(84, 112, 200, .3);
+}
+
+/* Style row of the dock: swatches only, with the active style's name */
+.style-switch button { font-size: 0; gap: 0; min-width: 40px; justify-content: center; padding: 0 10px; }
+.theme-switch__current {
+    min-width: 5.5em; padding: 0 10px 0 2px; font-family: var(--font-mono); font-size: .75rem;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--text);
+}
+
+/* Theme numbers pulled slightly toward the text color: readable on every style's band */
+.theme__num { color: color-mix(in srgb, var(--rosa) 82%, var(--text)); }
+
+/* ---------- Elevated, lit surfaces ---------- */
+.card, .exp, .more__panel { box-shadow: var(--elev-1); background-image: var(--sheen); }
+/* Pills (Why the equator, More information) stay flat */
+.chip, .soon-list li { box-shadow: none; background-image: none; }
+.stat { box-shadow: var(--elev-1); background: var(--sheen), linear-gradient(160deg, var(--navy-card-2), var(--navy-card) 60%); }
+.join__card, .modal { box-shadow: var(--elev-2); }
+.site-header.is-scrolled { box-shadow: 0 10px 30px -20px rgba(0, 0, 0, .6); }
+:root[data-tone="light"] .site-header.is-scrolled { box-shadow: 0 10px 30px -22px rgba(14, 21, 64, .3); }
+
+
+.btn--primary, .btn--primary:hover { background-image: var(--btn-sheen); }
+.btn--primary { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 12px 28px -12px color-mix(in srgb, var(--btn-bg) 75%, transparent); }
+.btn--primary:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 18px 36px -12px color-mix(in srgb, var(--btn-bg) 85%, transparent); }
+.btn--ghost { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06); }
+
+.display, .hero__tagline { text-shadow: var(--heading-shadow); }
+.display em, .display em * { text-shadow: none; }
+
+/* Bands give the page rhythm instead of one flat plane */
+.glance, .themes { background-color: var(--band); }
+.glance { box-shadow: inset 0 1px 0 var(--line), inset 0 -1px 0 var(--line); }
+
+/* ---------- 3D tilt (class + --rx/--ry set by JS on fine pointers) ---------- */
+.tilt { transform-style: preserve-3d; transition: transform .6s var(--ease), box-shadow .6s var(--ease), border-color .3s; will-change: transform; }
+.tilt:hover {
+    transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px);
+    box-shadow: var(--elev-hover);
+    transition-duration: .18s, .4s, .3s;
+}
+/* Experience cards keep only the pointer light: no tilt, no lift */
+.exp:hover { transform: none; }
+
+/* ---------- Planets ---------- */
+.idea::after { content: none; }
+/* Line-art planets (partials/sky): same language as the globe and the orbital atom */
+.sky { position: absolute; z-index: -1; pointer-events: none; transform: translate3d(0, var(--py, 0px), 0); will-change: transform; }
+.sky__svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* each body has its own tint */
+.sky--themes { --sky-tint: var(--accent); width: clamp(170px, 16vw, 240px); top: 6%; right: 6%; }
+.sky--audience { --sky-tint: var(--ice); width: clamp(120px, 10vw, 160px); top: 6%; right: 8%; }
+.sky--join { --sky-tint: var(--rosa); width: clamp(140px, 12vw, 180px); bottom: 6%; left: 42%; }
+:root[data-tone="light"] .sky--audience { --sky-tint: var(--accent-2); }
+.sky__twinkle { transform-box: fill-box; transform-origin: center; animation: sky-twinkle 3.2s ease-in-out infinite; }
+@keyframes sky-twinkle { 0%, 100% { opacity: .25; transform: scale(.6); } 50% { opacity: 1; transform: scale(1); } }
+@media (max-width: 760px) {
+    .sky--themes { width: 130px; top: 3%; right: -4%; opacity: .75; }
+    .sky--audience { width: 92px; top: 2%; right: 2%; }
+    .sky--join { left: auto; right: 2%; bottom: 1%; width: 110px; }
+}
+
+/* ---------- Hero horizon: the limb of a planet at night, lit by an atmosphere ---------- */
+.hero__horizon {
+    position: absolute; z-index: 0; left: 50%; top: calc(100% - 150px);
+    width: max(170vw, 1500px); aspect-ratio: 1; transform: translateX(-50%) translateY(var(--hero-hy, 0px));
+    border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, var(--horizon-fill) 96%, color-mix(in srgb, var(--horizon-fill) 60%, var(--horizon-glow)) 100%);
+    box-shadow:
+        0 -1px 0 var(--horizon-edge),
+        0 -24px 70px -6px var(--horizon-glow),
+        0 -80px 160px -40px var(--horizon-glow),
+        inset 0 40px 90px -40px var(--horizon-glow);
+}
+/* ---------- Sunrise from orbit ----------
+   Dawn light (no visible sun): the rim lights up from the top outward (white → pink → lilac) while a warm
+   bloom rises from behind the horizon and fills the sky, then it settles into a slow breathing glow.
+   Plays when .is-sunrise is set on the hero (on load, and again each time you come back to the top). */
+@property --spread {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 34deg;
+}
+.hero__horizon::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    background: conic-gradient(from 0deg,
+        color-mix(in srgb, var(--rosa) 55%, var(--sun-core)) 0deg,
+        color-mix(in srgb, var(--rosa) 75%, #fff) calc(var(--spread) * .16),
+        color-mix(in srgb, var(--lila) 80%, transparent) calc(var(--spread) * .5),
+        transparent var(--spread),
+        transparent calc(360deg - var(--spread)),
+        color-mix(in srgb, var(--lila) 80%, transparent) calc(360deg - var(--spread) * .5),
+        color-mix(in srgb, var(--rosa) 75%, #fff) calc(360deg - var(--spread) * .16),
+        color-mix(in srgb, var(--rosa) 55%, var(--sun-core)) 360deg);
+    /* a band just inside the rim, brightest at the edge: the lit atmosphere */
+    -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 34px), rgba(0, 0, 0, .22) calc(100% - 16px), #000 calc(100% - 2px), transparent 100%);
+    mask: radial-gradient(closest-side, transparent calc(100% - 34px), rgba(0, 0, 0, .22) calc(100% - 16px), #000 calc(100% - 2px), transparent 100%);
+    opacity: .9;
+}
+
+/* Everything above the rim lives in this window, so the sun is hidden until it clears the horizon */
+.sunrise {
+    position: absolute; left: 50%; bottom: 100%; width: min(1100px, 100vw); height: 380px;
+    transform: translateX(-50%); overflow: hidden; pointer-events: none;
+    /* soft edges: the light fades out before the window's borders */
+    -webkit-mask: radial-gradient(ellipse 50% 100% at 50% 100%, #000 55%, transparent 98%);
+    mask: radial-gradient(ellipse 50% 100% at 50% 100%, #000 55%, transparent 98%);
+}
+.sunrise__bloom {
+    position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; transform-origin: 50% 100%;
+    background: radial-gradient(ellipse 50% 100% at 50% 100%,
+        color-mix(in srgb, var(--rosa) 34%, transparent) 0%,
+        color-mix(in srgb, var(--rosa) 24%, transparent) 20%,
+        color-mix(in srgb, var(--violet) 14%, transparent) 46%,
+        transparent 72%);
+    opacity: .8;
+}
+
+/* Before dawn (JS present, sunrise not started yet) */
+.js .hero:not(.is-sunrise) .hero__horizon::before { --spread: 0deg; }
+.js .hero:not(.is-sunrise) .sunrise__bloom { opacity: 0; transform: scale(.25, .35); }
+
+/* Sunrise */
+.js .hero.is-sunrise .sunrise__bloom {
+    animation: sun-bloom 4.6s cubic-bezier(.2, .7, .2, 1) .5s both,
+               sun-bloom-breathe 10s ease-in-out 5.1s infinite alternate;
+}
+.js .hero.is-sunrise .hero__horizon::before { animation: rim-light 4s cubic-bezier(.3, .6, .2, 1) .7s both; }
+
+@keyframes sun-bloom {
+    0% { opacity: 0; transform: scale(.25, .35); }
+    60% { opacity: 1; transform: scale(1); }
+    100% { opacity: .8; transform: scale(1); }
+}
+@keyframes sun-bloom-breathe { from { opacity: .8; } to { opacity: .55; } }
+@keyframes rim-light { from { --spread: 0deg; } to { --spread: 34deg; } }
+
+/* The atmosphere breathes: its glow swells and settles, slowly */
+.hero__horizon::after {
+    content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    box-shadow: 0 -34px 100px -12px var(--horizon-glow), 0 -110px 200px -60px var(--horizon-glow);
+    opacity: .35;
+    animation: horizon-breathe 9s ease-in-out infinite alternate;
+}
+@keyframes horizon-breathe { to { opacity: .95; } }
+
+/* Light styles: the dark-mode atmosphere (wide purple halos) turns muddy on a light page.
+   Here the horizon is drawn clean instead: a crisp violet rim, a thin band of dawn light just inside it,
+   a planet body barely tinted, and a small, soft glow. */
+:root[data-tone="light"] .hero__horizon {
+    background: radial-gradient(closest-side,
+        var(--navy) 92.5%,
+        color-mix(in srgb, var(--horizon-fill) 70%, var(--navy)) 97%,
+        var(--horizon-fill) 99.7%,
+        transparent 100%);
+    box-shadow:
+        0 -1px 0 color-mix(in srgb, var(--accent) 55%, transparent),
+        0 -14px 34px -16px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+:root[data-tone="light"] .hero__horizon::after {
+    box-shadow: 0 -20px 60px -22px color-mix(in srgb, var(--rosa) 28%, transparent);
+}
+:root[data-tone="light"] .hero__horizon::before {
+    -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 18px), rgba(0, 0, 0, .25) calc(100% - 9px), #000 calc(100% - 1.5px), transparent 100%);
+    mask: radial-gradient(closest-side, transparent calc(100% - 18px), rgba(0, 0, 0, .25) calc(100% - 9px), #000 calc(100% - 1.5px), transparent 100%);
+    opacity: .65;
+}
+:root[data-tone="light"] .sunrise { opacity: .45; }
+
+.hero__content, .hero__scroll { z-index: 1; }
+
+/* Centered hero: wordmark, message and CTAs over the planet horizon — nothing competing beside it */
+.hero--center .hero__content { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.hero--center .hero__meta, .hero--center .hero__ctas { justify-content: center; }
+.hero--center .hero__wordmark { width: min(820px, 88vw); margin-inline: auto; }
+.hero--center .hero__subtitle { border-left: 0; padding-left: 0; align-items: center; }
+.hero--center .hero__subtitle::before {
+    content: ''; width: 44px; height: 2px; margin-bottom: 14px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--grad-a), var(--grad-c));
+}
+.hero--center .hero__lead { margin-inline: auto; }
+.hero--center { padding-bottom: 200px; }
+
+/* The Idea: copy on the left, the orbital "atom" on the right */
+.idea { overflow: hidden; }
+.idea__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+.idea__text .idea__cols { grid-template-columns: 1fr; gap: 18px; margin-top: 32px; max-width: 60ch; }
+.idea__visual { position: relative; width: 100%; max-width: 560px; aspect-ratio: 1; justify-self: end; transform: translate3d(0, var(--py, 0px), 0); }
+.idea__visual-inner { width: 100%; height: 100%; transform: translate3d(calc(var(--mx, 0) * -22px), calc(var(--my, 0) * -22px), 0); transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+@media (max-width: 900px) {
+    .idea__grid { grid-template-columns: 1fr; }
+    .idea__visual { order: -1; max-width: 380px; justify-self: center; margin-bottom: -20px; }
+}
+@media (max-width: 760px) { .hero__horizon { top: calc(100% - 90px); } }
+
+/* ---------- Review dock (cursor companion + style) ---------- */
+.dock {
+    position: fixed; right: 16px; bottom: 16px; z-index: 55;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+}
+.dock .theme-switch { position: static; }
+.dock__panel {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+    transform-origin: 100% 100%;
+    transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
+}
+.dock.is-collapsed .dock__panel { opacity: 0; transform: translateY(10px) scale(.96); visibility: hidden; pointer-events: none; }
+.dock__toggle {
+    width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+    border: 1px solid var(--line-strong); background: rgba(var(--deep-rgb), .78); color: var(--muted);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 12px 40px -12px var(--shadow-lg);
+    transition: color .2s, border-color .2s, opacity .3s;
+}
+.dock__toggle:hover { color: var(--text); border-color: var(--accent); }
+.dock__toggle .icon { width: 20px; height: 20px; }
+.dock__icon-open { display: none; }
+.dock.is-collapsed .dock__icon-open { display: block; }
+.dock.is-collapsed .dock__icon-close { display: none; }
+/* Collapsed, the toggle fades back until hovered so the page reads clean */
+.dock.is-collapsed .dock__toggle { opacity: .55; }
+.dock.is-collapsed .dock__toggle:hover, .dock.is-collapsed .dock__toggle:focus-visible { opacity: 1; }
+body.is-typing .dock__toggle { opacity: 0; pointer-events: none; }
+.dock__glyph { width: 18px; height: 18px; flex: none; }
+.companion-switch button { padding: 0 14px 0 10px; }
+@media (max-width: 1180px) {
+    .dock .theme-switch button { font-size: 0; gap: 0; min-width: 44px; justify-content: center; padding: 0 10px; }
+}
+@media (max-width: 560px) { .dock { right: 12px; bottom: 12px; } }
+/* No cursor on touch screens, and no companion when motion is reduced */
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .companion-switch, .companion { display: none !important; }
+}
+
+/* ---------- Cursor companions ---------- */
+.companion { position: fixed; inset: 0; z-index: 58; pointer-events: none; overflow: hidden; }
+.bird {
+    position: absolute; left: 0; top: 0; overflow: visible; opacity: 0;
+    transition: opacity .4s; will-change: transform;
+    /* A soft lilac halo keeps the birds readable against the dark sky */
+    filter: drop-shadow(0 0 1px rgba(233, 196, 244, .9)) drop-shadow(0 0 10px rgba(233, 196, 244, .45)) drop-shadow(0 12px 16px rgba(0, 0, 0, .4));
+}
+.bird.is-active { opacity: 1; }
+:root[data-tone="light"] .bird { filter: drop-shadow(0 10px 12px rgba(14, 21, 64, .22)); }
+
+/* Hummingbird wings beat ~15×/s; the fan behind sells the blur */
+.bird--hummingbird .bird__wing { transform-box: view-box; transform-origin: 62px 36px; }
+.bird--hummingbird .bird__wing--near { animation: hb-flap .07s linear infinite alternate; }
+.bird--hummingbird .bird__wing--far { animation: hb-flap .07s linear infinite alternate-reverse; }
+@keyframes hb-flap { from { transform: rotate(-24deg); } to { transform: rotate(58deg) scaleY(.7); } }
+.bird--hummingbird .bird__tail { transform-box: view-box; transform-origin: 48px 50px; animation: hb-tail 1.6s ease-in-out infinite alternate; }
+@keyframes hb-tail { from { transform: rotate(-4deg); } to { transform: rotate(6deg); } }
+
+/* Satellite: a faint orbit ring around the cursor, a blinking beacon */
+.sat-orbit {
+    position: absolute; left: 0; top: 0; width: 96px; height: 36px; border-radius: 50%; z-index: 1;
+    border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent); opacity: 0; transition: opacity .4s;
+}
+.sat-orbit.is-active { opacity: .55; }
+.sat__light { animation: sat-blink 1.4s steps(1) infinite; }
+@keyframes sat-blink { 50% { opacity: .15; } }
+
+/* Comet: head + tail particles that shrink and fade along the trail */
+.comet { position: absolute; inset: 0; opacity: 0; transition: opacity .4s; }
+.comet.is-active { opacity: 1; }
+.comet__dot {
+    --size: calc(7px - var(--i) * .32px);
+    position: absolute; left: 0; top: 0; width: var(--size); height: var(--size);
+    margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2); border-radius: 50%;
+    background: color-mix(in srgb, var(--lila) calc(100% - var(--i) * 4%), var(--violet));
+    opacity: calc(.5 - var(--i) * .03);
+    will-change: transform;
+}
+.comet__dot:first-child { opacity: .95; background: #F6EAFB; box-shadow: 0 0 6px 1px rgba(233, 196, 244, .7); }
+:root[data-tone="light"] .comet__dot { background: color-mix(in srgb, var(--accent) calc(100% - var(--i) * 4%), var(--violet)); }
+:root[data-tone="light"] .comet__dot:first-child { background: var(--accent); box-shadow: 0 0 5px 1px rgba(123, 69, 184, .45); }
+
+/* Mini moon orbiting the cursor */
+.mini-moon {
+    position: absolute; left: 0; top: 0; width: 14px; height: 14px; border-radius: 50%; opacity: 0;
+    transition: opacity .4s; will-change: transform;
+    background:
+        radial-gradient(circle at 62% 38%, #9D98B8 0 1.4px, rgba(0, 0, 0, 0) 2px),
+        radial-gradient(circle at 36% 66%, #A7A2C0 0 1.8px, rgba(0, 0, 0, 0) 2.4px),
+        radial-gradient(circle at 34% 30%, #FFFFFF, #D7D3E8 45%, #8E89AB 100%);
+    box-shadow: inset -3px -3px 5px rgba(10, 6, 30, .6), 0 0 10px rgba(233, 196, 244, .55);
+}
+.mini-moon.is-active { opacity: 1; }
+:root[data-tone="light"] .mini-moon { box-shadow: inset -3px -3px 5px rgba(10, 6, 30, .45), 0 2px 6px rgba(14, 21, 64, .3); }
+
+/* Booby: slow, deep seabird strokes; almost still while gliding */
+.bird--booby .bird__wing { transform-box: view-box; transform-origin: 56px 33px; animation: bb-flap .55s ease-in-out infinite alternate; }
+.bird--booby .bird__wing--far { animation-name: bb-flap-far; }
+@keyframes bb-flap { from { transform: rotate(-26deg); } to { transform: rotate(38deg) scaleY(.8); } }
+@keyframes bb-flap-far { from { transform: rotate(-18deg); } to { transform: rotate(26deg) scaleY(.85); } }
+
+.companion__spark {
+    position: absolute; left: 0; top: 0; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%;
+    background: var(--lila); box-shadow: 0 0 8px 2px rgba(233, 196, 244, .7); opacity: 0;
+}
+:root[data-tone="light"] .companion__spark { background: var(--violet); box-shadow: 0 0 6px 1px rgba(123, 69, 184, .5); }
+.companion__spark.is-live { animation: spark .8s ease-out forwards; }
+@keyframes spark { from { opacity: .95; transform: translate(var(--sx), var(--sy)) scale(1); } to { opacity: 0; transform: translate(var(--sx), calc(var(--sy) + 14px)) scale(.2); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .tilt:hover { transform: none; }
+    .planet { transform: none; }
+}
+
+/* ---------- Globe → map of Ecuador ---------- */
+/* An invisible hit area sits exactly over the Quito marker; the globe itself is untouched. */
+.equator__visual { position: relative; }
+.equator { overflow-x: clip; } /* the zoom into Quito must not widen the page */
+.globe { transform-origin: 40.5% 56.75%; transition: transform .7s cubic-bezier(.7, 0, .3, 1), opacity .55s ease .12s; }
+.equator__visual.is-zooming .globe { transform: scale(2.6); opacity: 0; }
+.globe-pin {
+    position: absolute; left: 40.5%; top: 56.75%; width: 48px; height: 48px; margin: -24px 0 0 -24px; padding: 0;
+    border-radius: 50%; border: 1px solid transparent; background: transparent; cursor: pointer;
+    transition: border-color .3s, box-shadow .3s, opacity .3s;
+}
+.globe-pin:hover, .globe-pin:focus-visible {
+    outline: none; border-color: rgba(233, 196, 244, .75);
+    box-shadow: 0 0 0 6px rgba(233, 196, 244, .1), 0 0 26px rgba(236, 95, 170, .35);
+}
+.globe-pin__hint {
+    position: absolute; left: calc(100% + 8px); top: 50%; transform: translate(-6px, -50%);
+    white-space: nowrap; padding: 7px 12px; border-radius: 999px; pointer-events: none;
+    font-family: var(--font-mono); font-size: .72rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+    background: var(--btn-bg); color: var(--btn-fg); box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .6);
+    opacity: 0; transition: opacity .3s, transform .3s var(--ease);
+}
+.globe-pin:hover .globe-pin__hint, .globe-pin:focus-visible .globe-pin__hint, .globe-pin.is-hinting .globe-pin__hint { opacity: 1; transform: translate(0, -50%); }
+.equator__visual.is-zooming .globe-pin { opacity: 0; }
+
+/* Immersive, frameless, and always in the active style: the page fades into the style's own background
+   and the map floats on it. Every color below comes from the style tokens. */
+.modal--map {
+    /* map palette, derived from the active style */
+    --map-land-0: color-mix(in srgb, var(--navy-card-2) 86%, var(--accent));
+    --map-land-1: var(--navy-card);
+    --map-edge: var(--accent);
+    --map-ink: var(--text);
+    --map-soft: var(--muted);
+    --map-faint: var(--faint);
+    --map-snow: #fff;
+
+    width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: 0;
+    border: 0; border-radius: 0; box-shadow: none; overflow: hidden; color: var(--text);
+    /* the dialog itself is the veil (::backdrop can't read the style variables everywhere) */
+    background:
+        radial-gradient(90% 80% at 60% 48%, color-mix(in srgb, var(--violet) 16%, transparent), transparent 70%),
+        color-mix(in srgb, var(--navy) 90%, transparent);
+    backdrop-filter: blur(16px) saturate(.85); -webkit-backdrop-filter: blur(16px) saturate(.85);
+}
+:root[data-tone="light"] .modal--map { --map-snow: var(--accent-2); --map-land-0: color-mix(in srgb, var(--navy-card-2) 80%, var(--accent)); }
+.modal--map::backdrop { background: transparent; }
+.modal--map[open] { animation: map-fade .7s ease both; }
+@keyframes map-fade { from { opacity: 0; } }
+.modal--map .modal__inner {
+    height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto;
+    padding: clamp(20px, 3.2vw, 44px) clamp(16px, 4vw, 64px) clamp(16px, 2.6vw, 32px);
+}
+.modal--map .modal__close {
+    position: fixed; top: clamp(14px, 2.4vw, 28px); right: clamp(14px, 2.4vw, 28px); z-index: 2;
+    background: color-mix(in srgb, var(--navy) 60%, transparent);
+}
+.modal--map .modal__close:hover { color: var(--text); border-color: var(--accent); }
+.map-frame {
+    min-height: 0; display: grid; place-items: center; margin-top: 8px;
+    /* no frame: the grid and glow fade out toward every edge */
+    -webkit-mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent),
+                  linear-gradient(transparent, #000 7%, #000 93%, transparent);
+    -webkit-mask-composite: source-in;
+    mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent),
+          linear-gradient(transparent, #000 7%, #000 93%, transparent);
+    mask-composite: intersect;
+}
+.map { display: block; width: auto; height: 100%; max-width: 100%; max-height: 100%; }
+.map__grid line { stroke: var(--line); stroke-width: 1; }
+.map__coords text { font: 500 11px var(--font-mono); letter-spacing: .1em; fill: var(--map-faint); }
+.map__neighbors path { fill: color-mix(in srgb, var(--map-ink) 4%, transparent); stroke: var(--line-strong); stroke-width: .8; }
+.map__region-labels text { font: 500 12px var(--font-mono); letter-spacing: .3em; fill: var(--map-faint); opacity: .8; }
+.map__inset rect { fill: none; stroke: none; }
+.map__islands { fill: url(#map-land); stroke: var(--map-edge); stroke-width: .9; stroke-linejoin: round; }
+.map__inset-title { font: 600 11px var(--font-mono); letter-spacing: .2em; fill: var(--accent); }
+.map__inset-note { font: 400 10px var(--font-mono); letter-spacing: .06em; fill: var(--map-faint); }
+.map__land { fill: url(#map-land); stroke: var(--map-edge); stroke-width: 1.4; stroke-linejoin: round; }
+.map__equator { stroke-width: 2.2; }
+.map__equator-label { font: 600 11px var(--font-mono); letter-spacing: .22em; fill: var(--accent); }
+.map__volcanoes path:first-child { fill: color-mix(in srgb, var(--map-soft) 35%, transparent); stroke: var(--map-soft); stroke-width: .7; }
+.map__snow { fill: var(--map-snow); }
+.map__volcanoes text, .map__cities text { font: 400 11px var(--font-body); fill: var(--map-soft); }
+.map__cities circle { fill: var(--map-soft); }
+.map__route { fill: none; stroke: var(--rosa); stroke-width: 2; stroke-dasharray: 2 7; stroke-linecap: round; animation: route-flow 1.2s linear infinite; }
+@keyframes route-flow { to { stroke-dashoffset: -9; } }
+.map__mitad rect { fill: var(--accent); }
+.map__mitad text { font: 500 11px var(--font-mono); letter-spacing: .06em; fill: var(--accent); }
+.map__dot { fill: var(--navy); stroke: var(--rosa); stroke-width: 3; }
+.map__venue--stargate .map__dot { stroke: var(--violet); }
+.map__pulse { fill: color-mix(in srgb, var(--rosa) 35%, transparent); transform-box: fill-box; transform-origin: center; animation: ping 2.4s ease-out infinite; }
+.map__venue--stargate .map__pulse { fill: color-mix(in srgb, var(--violet) 45%, transparent); animation-delay: -1.2s; }
+.map__callout path { fill: none; stroke: color-mix(in srgb, var(--accent) 60%, transparent); stroke-width: 1; }
+.map__callout-kicker { font: 500 10.5px var(--font-mono); letter-spacing: .18em; fill: var(--rosa); }
+.map__callout-title { font: 600 17px var(--font-display); letter-spacing: -.01em; fill: var(--map-ink); }
+.map__callout-sub { font: 400 12px var(--font-body); fill: var(--map-soft); }
+.map__scale path { fill: none; stroke: var(--map-soft); stroke-width: 1.2; }
+.map__scale text, .map__north text { font: 500 10px var(--font-mono); letter-spacing: .1em; fill: var(--map-soft); }
+.map__north path { fill: var(--accent); }
+
+.map-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 32px; margin-top: 14px; font-size: .9rem; color: var(--muted); }
+.map-legend li { display: flex; align-items: center; gap: 10px; }
+.map-legend strong { color: var(--text); font-weight: 600; margin-right: 6px; }
+.map-legend__dot { width: 12px; height: 12px; flex: none; border-radius: 50%; background: var(--navy); border: 3px solid var(--rosa); }
+.map-legend__dot--stargate { border-color: var(--violet); }
+.map-legend__line { width: 22px; height: 2px; flex: none; background: linear-gradient(90deg, var(--grad-a), var(--grad-c)); }
+
+/* The map draws itself when opened: coastline, then the equator, then the places */
+.js .map-frame .map__land { stroke-dasharray: 1; stroke-dashoffset: 1; fill-opacity: 0; }
+.map-frame.is-open .map__land {
+    stroke-dashoffset: 0; fill-opacity: 1;
+    transition: stroke-dashoffset 1.8s cubic-bezier(.65, 0, .35, 1) .15s, fill-opacity .9s ease 1.1s;
+}
+.js .map-frame .map__equator { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.map-frame.is-open .map__equator { stroke-dashoffset: 0; transition: stroke-dashoffset 1.4s cubic-bezier(.65, 0, .35, 1) .5s; }
+.js .map-frame :is(.map__coords, .map__neighbors, .map__region-labels, .map__inset, .map__volcanoes, .map__cities,
+    .map__mitad, .map__route, .map__equator-label, .map__scale, .map__north, .map__callout) { opacity: 0; }
+.map-frame.is-open :is(.map__coords, .map__neighbors, .map__region-labels, .map__inset, .map__volcanoes, .map__cities,
+    .map__mitad, .map__route, .map__equator-label, .map__scale, .map__north, .map__callout) { opacity: 1; transition: opacity .8s ease var(--md, 1s); }
+.map__neighbors { --md: .3s; }
+.map__coords { --md: .6s; }
+.map__region-labels, .map__inset { --md: 1.2s; }
+.map__scale, .map__north { --md: 1.4s; }
+.map__volcanoes, .map__cities, .map__equator-label { --md: 1.6s; }
+.map__mitad { --md: 1.8s; }
+.map__route { --md: 2.3s; }
+.map__callout--conference { --md: 2.3s; }
+.map__callout--stargate { --md: 2.5s; }
+.js .map-frame .map__dot { opacity: 0; transform: scale(.2); transform-box: fill-box; transform-origin: center; }
+.map-frame.is-open .map__dot { opacity: 1; transform: none; transition: opacity .4s ease 2s, transform .6s cubic-bezier(.34, 1.56, .64, 1) 2s; }
+.map-frame.is-open .map__venue--stargate .map__dot { transition-delay: 2.2s; }
+.js .map-frame:not(.is-open) .map__pulse { display: none; }
+
+.map-swipe { display: none; }
+.map-legend li { align-items: flex-start; }
+.map-legend__dot, .map-legend__line { margin-top: .45em; }
+@media (max-width: 700px) {
+    /* Keep the map readable on phones: it scrolls sideways (opens on the mainland; Galápagos is a swipe away) */
+    .map-frame { display: block; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; align-self: center; }
+    .map-frame::-webkit-scrollbar { display: none; }
+    .map { width: 760px; height: auto; max-width: none; max-height: none; }
+    .map-swipe { display: block; margin-top: 6px; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .08em; color: var(--faint); text-align: center; }
+    .map-legend { flex-direction: column; align-items: flex-start; gap: 10px; font-size: .88rem; }
+    .globe-pin__hint { left: auto; right: calc(100% + 8px); }
+}

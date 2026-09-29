@@ -1,0 +1,169 @@
+/* ==========================================================================
+   Motion & polish — entrance choreography, scroll reveals, pointer effects.
+   Everything here is progressive: without JS (.js) or with reduced motion, content is simply shown.
+   ========================================================================== */
+
+/* ---------- Hero entrance (runs once .is-loaded is set on <html>) ---------- */
+.js .intro { opacity: 0; transform: translateY(26px); filter: blur(6px); }
+.is-loaded .intro {
+    opacity: 1; transform: none; filter: none;
+    transition: opacity .75s var(--ease), transform .75s var(--ease), filter .75s var(--ease);
+    transition-delay: var(--d, 0s);
+}
+.js .hero__scroll.intro, .is-loaded .hero__scroll.intro { transform: translateX(-50%); filter: none; }
+
+/* Wordmark letters rise from behind a baseline mask (the SVG clip), one after another */
+.js .hero__wordmark .wm-l { transform: translateY(105%); transform-box: fill-box; }
+.is-loaded .hero__wordmark .wm-l {
+    transform: none;
+    transition: transform .9s cubic-bezier(.19, 1, .22, 1);
+}
+.hero__wordmark .wm-l:nth-of-type(1) { transition-delay: .10s; }
+.hero__wordmark .wm-l:nth-of-type(2) { transition-delay: .14s; }
+.hero__wordmark .wm-l:nth-of-type(3) { transition-delay: .18s; }
+.hero__wordmark .wm-l:nth-of-type(4) { transition-delay: .22s; }
+.hero__wordmark .wm-l:nth-of-type(5) { transition-delay: .26s; }
+.hero__wordmark .wm-l:nth-of-type(6) { transition-delay: .30s; }
+.hero__wordmark .wm-l:nth-of-type(7) { transition-delay: .34s; }
+
+/* Orbits draw themselves when their block scrolls into view (.is-drawn), then satellites and the star appear */
+.js .orbits__path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.is-drawn .orbits__path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2.6s cubic-bezier(.65, 0, .35, 1);
+    transition-delay: calc(.2s + var(--i, 0) * .2s);
+}
+.js .orbits__sat, .js .orbits__core { opacity: 0; }
+.is-drawn .orbits__sat { opacity: 1; transition: opacity 1s 2.2s; }
+.is-drawn .orbits__core { opacity: 1; transition: opacity 2.4s .4s; }
+.orbits__star-in { transform-box: fill-box; transform-origin: center; }
+.js .orbits__star-in { opacity: 0; transform: scale(.2) rotate(-135deg); }
+.is-drawn .orbits__star-in { opacity: 1; transform: none; transition: opacity 1s .5s, transform 1.6s cubic-bezier(.19, 1, .22, 1) .5s; }
+
+/* ---------- Scroll reveals ---------- */
+.js .reveal {
+    opacity: 0; transform: translateY(32px); filter: blur(5px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease), filter 1s var(--ease);
+    transition-delay: var(--stagger, 0s);
+}
+.js .reveal.is-visible { opacity: 1; transform: none; filter: none; }
+
+/* Headline words slide up from a mask */
+.split .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+.split .w > span { display: inline-block; transform: translateY(110%); transition: transform 1.1s cubic-bezier(.19, 1, .22, 1); transition-delay: calc(var(--wi, 0) * 55ms); }
+.split.is-visible .w > span { transform: none; }
+.display.split em { background: none; color: inherit; }
+.display.split em .w > span {
+    background: linear-gradient(90deg, var(--grad-a), var(--grad-b) 60%, var(--grad-c));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* Eyebrow line draws in */
+.js .eyebrow.reveal::before { transform: scaleX(0); transform-origin: left; transition: transform 1s var(--ease) .25s; }
+.js .eyebrow.reveal.is-visible::before { transform: scaleX(1); }
+
+/* ---------- Pointer spotlight on cards ---------- */
+.spot { position: relative; isolation: isolate; }
+.spot::before {
+    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgba(233, 196, 244, .11), transparent 45%);
+    opacity: 0; transition: opacity .4s;
+}
+.spot:hover::before { opacity: 1; }
+.spot--border::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; padding: 1px; z-index: 2;
+    background: radial-gradient(280px circle at var(--x, 50%) var(--y, 50%), rgba(233, 196, 244, .8), transparent 45%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: 0; transition: opacity .4s;
+}
+.spot--border:hover::after { opacity: 1; }
+.card:hover .icon-ring { border-color: var(--accent); color: var(--accent); }
+.icon-ring { transition: border-color .3s, color .3s; }
+
+/* ---------- Marquee band ---------- */
+.marquee {
+    position: relative; overflow: hidden; padding: 26px 0;
+    border-block: 1px solid var(--line); background: rgba(var(--deep-rgb), .55);
+}
+/* Edge fades */
+.marquee::before, .marquee::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 9%; z-index: 1; pointer-events: none;
+    background: linear-gradient(90deg, var(--navy), transparent);
+}
+.marquee::before { left: 0; }
+.marquee::after { right: 0; transform: scaleX(-1); }
+.marquee__track { display: flex; align-items: center; width: max-content; animation: marquee 80s linear infinite; }
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__item, .marquee__star { margin-right: 40px; flex: none; }
+.marquee__item {
+    font-family: var(--font-display); font-weight: 600; text-transform: uppercase; white-space: nowrap;
+    font-size: clamp(1.3rem, .9rem + 1.6vw, 2.3rem); letter-spacing: -.01em; color: var(--text);
+}
+.marquee__item--outline { color: transparent; -webkit-text-stroke: 1px var(--outline-text); }
+.marquee__star { width: 22px; height: 22px; color: var(--rosa); animation: spin 10s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---------- Section atmosphere ---------- */
+.idea::after {
+    content: '0°'; position: absolute; z-index: -1; right: -2vw; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-display); font-weight: 600; font-size: clamp(12rem, 28vw, 26rem); line-height: 1;
+    color: transparent; -webkit-text-stroke: 1px var(--watermark); pointer-events: none;
+}
+.idea { overflow: hidden; background: radial-gradient(40% 55% at 88% 40%, rgba(169, 121, 217, .12), transparent 70%); }
+.experience { background: radial-gradient(45% 40% at 5% 70%, rgba(236, 95, 170, .08), transparent 70%); }
+.themes { background: radial-gradient(40% 45% at 100% 80%, rgba(169, 121, 217, .10), transparent 70%); }
+.audience { background: radial-gradient(40% 45% at 0% 20%, rgba(187, 210, 255, .06), transparent 70%); }
+.glance .stat__value { text-shadow: 0 0 40px var(--stat-glow); }
+
+/* Animations pause while their section is off screen (set by JS) */
+.is-offscreen *, .is-offscreen *::before, .is-offscreen *::after { animation-play-state: paused !important; }
+
+/* ---------- Globe & illustrations ---------- */
+.globe__dash { transform-origin: 200px 200px; animation: spin 80s linear infinite; }
+.equator__visual { transition: transform 1.4s var(--ease); }
+.js .equator__visual.reveal { transform: translateY(32px) scale(.92) rotate(-8deg); }
+.js .equator__visual.reveal.is-visible { transform: none; }
+
+.illus__twinkle { animation: twinkle 3s ease-in-out infinite alternate; }
+.illus__wave { stroke-width: 2; opacity: 0; animation: wave 2.4s ease-out infinite; }
+@keyframes wave { 0% { opacity: 0; } 30% { opacity: .9; } 100% { opacity: 0; } }
+.illus__equator { animation: dash 2.5s linear infinite; }
+@keyframes dash { to { stroke-dashoffset: -36; } }
+.illus__beams path { transform-origin: top center; transform-box: fill-box; animation: sway 7s ease-in-out infinite alternate; }
+.illus__beams path:nth-child(2) { animation-delay: -3.5s; }
+.illus__beams path:nth-child(3) { animation-duration: 9s; }
+@keyframes sway { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+.illus__screen-orbits { transform-origin: 400px 170px; animation: spin 50s linear infinite; }
+
+/* ---------- Closing rings ---------- */
+.closing__rings {
+    position: absolute; left: 50%; top: 50%; width: min(1100px, 150vw); aspect-ratio: 1;
+    transform: translate(-50%, -50%); perspective: 1400px; z-index: -1; pointer-events: none;
+}
+.closing__rings span {
+    position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(233, 196, 244, .16);
+    transform: rotateX(76deg); animation: ring 46s linear infinite;
+}
+.closing__rings span::after {
+    content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%;
+    background: var(--lila); box-shadow: 0 0 16px 2px rgba(233, 196, 244, .8);
+}
+.closing__rings span:nth-child(2) { inset: 14%; border-color: rgba(169, 121, 217, .26); animation-duration: 30s; animation-direction: reverse; }
+.closing__rings span:nth-child(2)::after { background: var(--rosa); box-shadow: 0 0 16px 2px rgba(236, 95, 170, .8); }
+.closing__rings span:nth-child(3) { inset: 28%; border-style: dashed; border-color: rgba(187, 210, 255, .2); animation-duration: 64s; }
+.closing__rings span:nth-child(3)::after { background: var(--ice); box-shadow: 0 0 14px 2px rgba(187, 210, 255, .7); }
+@keyframes ring { from { transform: rotateX(76deg) rotateZ(0); } to { transform: rotateX(76deg) rotateZ(360deg); } }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
+    .js .reveal, .js .intro { opacity: 1; transform: none; filter: none; }
+    .split .w > span, .js .hero__wordmark .wm-l { transform: none; }
+    .js .orbits__path { stroke-dashoffset: 0; }
+    .js .orbits__sat, .js .orbits__core, .js .orbits__star-in { opacity: 1; transform: none; }
+    .shooting-star { display: none; }
+    .marquee__track { animation: none; }
+}

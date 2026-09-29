@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "equinox",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["artisan", "serve", "--port=8027"],
+      "cwd": "C:\\Users\\soporte\\source\\repos\\equinox",
+      "port": 8027
+    }
+  ]
+}

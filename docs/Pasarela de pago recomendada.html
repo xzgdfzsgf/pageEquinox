@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es-EC">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasarela de pago EQUINOX</title>
+<meta name="author" content="Soporte HEKA (soporte@heka.com.ec)">
+<meta name="description" content="Análisis del proyecto EQUINOX 2027 con la recomendación de pasarela de pago, pagos internacionales, seguridad, requisitos y cronograma de despliegue.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Poppins:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#298ECE;--blue-d:#1C6EA8;--blue-l:#E8F3FB;--blue-g:#F2F8FD;--gray:#ADB1B6;
+  --bg:#FFFFFF;--panel:#F8F9FA;--card:#FFFFFF;--ink:#000000;--ink2:#4A5257;--ink3:#8B959C;
+  --line:#E6EAED;--line-s:#F0F3F5;--ok:#1F9D6B;--bad:#D1495B;--warn:#E0913A;
+  --sh-s:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.05);
+  --sh-m:0 4px 10px rgba(16,24,40,.07),0 12px 24px rgba(16,24,40,.06);
+  --ease:cubic-bezier(.22,.61,.36,1);--snap:cubic-bezier(.34,1.3,.64,1);--max:1180px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#3EA0E6;--blue-d:#8ECBF1;--blue-l:rgba(62,160,230,.14);--blue-g:rgba(62,160,230,.07);
+    --bg:#0D1117;--panel:#111823;--card:#161D27;--ink:#F3F6F9;--ink2:#B4BFC9;--ink3:#7E8B98;--line:#25303D;--line-s:#1B2430;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#3EA0E6;--blue-d:#8ECBF1;--blue-l:rgba(62,160,230,.14);--blue-g:rgba(62,160,230,.07);
+  --bg:#0D1117;--panel:#111823;--card:#161D27;--ink:#F3F6F9;--ink2:#B4BFC9;--ink3:#7E8B98;--line:#25303D;--line-s:#1B2430;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--panel);color:var(--ink2);font:400 15.5px/1.65 Poppins,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
+::selection{background:var(--blue-l);color:var(--ink)}
+h1,h2,h3{font-family:"Bricolage Grotesque",Poppins,Arial,sans-serif;color:var(--ink);margin:0}
+h1{font-weight:800;font-size:clamp(36px,6vw,64px);line-height:1;letter-spacing:-.04em}
+h2{font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1.06;letter-spacing:-.035em}
+h3{font-weight:700;font-size:21px;line-height:1.15;letter-spacing:-.02em}
+h1 em,h2 em{font-style:italic;color:var(--blue)}
+p{margin:0 0 14px}
+a{color:var(--blue-d)}
+strong{color:var(--ink);font-weight:600}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+/* Encabezado y pie con isologo a la izquierda */
+.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:72px}
+.logo{width:44px;height:44px;flex:none;display:block}
+.logo svg{width:100%;height:100%;display:block}
+.logo svg path{fill:var(--blue)}
+.top__txt{font:600 11px/1.3 Poppins,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.top__txt b{display:block;color:var(--ink);letter-spacing:.12em}
+.top__date{margin-left:auto;font:500 13px/1 Poppins,sans-serif;color:var(--ink3);white-space:nowrap}
+.theme-btn{border:1px solid var(--line);background:var(--card);color:var(--ink2);border-radius:999px;padding:7px 12px;font:500 12px Poppins,sans-serif;cursor:pointer;transition:transform .2s var(--snap)}
+.theme-btn:active{transform:scale(.94)}
+
+.hero{padding:72px 0 40px}
+.eyebrow{display:flex;align-items:center;gap:14px;font:600 11px/1.2 Poppins,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--blue-d);margin-bottom:18px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+.lead{font-size:17px;max-width:760px;color:var(--ink2);margin-top:20px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{background:var(--blue-l);color:var(--blue-d);font:500 12.5px/1 Poppins,sans-serif;padding:8px 12px;border-radius:999px}
+
+section{padding:44px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh-s);padding:26px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:26px}
+.fact h3{font-size:18px;margin-bottom:8px}
+.fact p{font-size:14.5px;margin:0}
+.src{display:inline-block;margin-top:12px;font:500 11.5px/1 Poppins,sans-serif;background:var(--blue-g);color:var(--blue-d);border:1px solid var(--line);border-radius:999px;padding:6px 10px}
+
+/* Veredicto */
+.verdict{margin-top:26px;display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+.win{--kc:#298ECE;background:linear-gradient(160deg,color-mix(in srgb,var(--kc) 12%,var(--card)),var(--card));border:1px solid color-mix(in srgb,var(--kc) 35%,var(--line));border-radius:18px;padding:30px;position:relative;overflow:hidden;box-shadow:var(--sh-m)}
+.win::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+.win .tag{font:600 11px Poppins,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--blue-d)}
+.win h3{font-size:clamp(30px,4vw,44px);letter-spacing:-.04em;margin:10px 0 12px;font-weight:800}
+.stack{display:flex;flex-direction:column;gap:12px}
+.stack .card{padding:20px}
+.stack .card h3{font-size:17px;margin-bottom:6px}
+.stack .card p{font-size:14px;margin:0}
+
+/* Tabla comparativa */
+.tbl-wrap{margin-top:26px;overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--sh-s)}
+table{border-collapse:collapse;width:100%;min-width:860px;font-size:13.5px}
+th,td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line-s);vertical-align:top}
+thead th{position:sticky;top:0;background:var(--panel);font:600 12px/1.3 Poppins,sans-serif;letter-spacing:.04em;color:var(--ink);text-transform:uppercase}
+tbody tr:hover{background:var(--blue-g)}
+tbody th{font-weight:600;color:var(--ink);white-space:nowrap}
+tr.best th{color:var(--blue-d)}
+tr.best{background:color-mix(in srgb,var(--blue) 6%,transparent)}
+.t{display:inline-block;border-radius:6px;padding:3px 8px;font:600 11.5px/1.3 Poppins,sans-serif;white-space:nowrap}
+.t.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.t.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:#A9620F}
+.t.bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+:root[data-theme="dark"] .t.warn{color:#F0B06A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .t.warn{color:#F0B06A}}
+.score{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:20px;color:var(--ink)}
+.note{font-size:12.5px;color:var(--ink3);margin-top:12px}
+
+/* Pasos */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:26px 0 0;display:grid;gap:14px}
+ol.steps li{counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px 20px 74px;position:relative;box-shadow:var(--sh-s)}
+ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:22px;top:18px;font:800 24px/1 "Bricolage Grotesque",sans-serif;color:var(--blue)}
+ol.steps li strong{display:block;margin-bottom:4px;font-size:15.5px}
+ol.steps li span{font-size:14.5px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:var(--blue-g);border:1px solid var(--line-s);border-radius:5px;padding:1px 5px;color:var(--ink)}
+
+.risk{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:26px}
+.risk .card{border-left:4px solid var(--warn)}
+.risk .card h3{font-size:17px;margin-bottom:6px}
+.risk .card p{font-size:14px;margin:0}
+
+.foot{border-top:1px solid var(--line);background:var(--bg);margin-top:40px}
+.foot .wrap{display:flex;align-items:center;gap:16px;padding-top:24px;padding-bottom:24px;flex-wrap:wrap}
+.foot .logo{width:36px;height:36px}
+.foot p{margin:0;font-size:12.5px;color:var(--ink3)}
+
+.reveal{opacity:0;transform:translateY(10px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+@media (max-width:880px){
+  .verdict{grid-template-columns:1fr}
+  .top__date{display:none}
+  .wrap{padding:0 16px}
+  .hero{padding:48px 0 24px}
+  ol.steps li{padding-left:64px}
+}
+@media (prefers-reduced-motion: reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+</style>
+<style>
+.kpis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:26px}
+.kpi{--kc:#298ECE;background:linear-gradient(180deg,color-mix(in srgb,var(--kc) 9%,var(--card)),var(--card));border:1px solid color-mix(in srgb,var(--kc) 28%,var(--line));border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--kc)}
+.kpi b{display:block;font:800 30px/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;color:var(--ink)}
+.kpi span{font-size:13px;color:var(--ink2);display:block;margin-top:6px;line-height:1.45}
+.kpi.warn{--kc:#E0913A}.kpi.ok{--kc:#1F9D6B}.kpi.bad{--kc:#D1495B}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+.card h3{margin-bottom:8px;font-size:18px}
+.card p,.card li{font-size:14.5px}
+ul.chk{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:9px}
+ul.chk li{position:relative;padding-left:26px;line-height:1.55}
+ul.chk li::before{content:"";position:absolute;left:2px;top:6px;width:12px;height:12px;border-radius:50%;border:2px solid var(--blue);background:var(--blue-l)}
+ul.chk.warn li::before{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 15%,transparent)}
+ul.chk.ok li::before{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.flow{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--sh-s);overflow-x:auto}
+.flow svg{display:block;min-width:820px;width:100%;height:auto}
+.flow text{font-family:Poppins,sans-serif}
+.flow .bx{fill:var(--card);stroke:var(--line)}
+.flow .bx.b{fill:var(--blue-l);stroke:var(--blue)}
+.flow .bx.g{fill:color-mix(in srgb,var(--ok) 10%,var(--card));stroke:var(--ok)}
+.flow .t1{fill:var(--ink);font-size:13px;font-weight:600}
+.flow .t2{fill:var(--ink2);font-size:11.5px}
+.flow .ln{stroke:var(--ink3);stroke-width:1.5;fill:none}
+.flow .ln.d{stroke-dasharray:5 4}
+.flow .ar{fill:var(--ink3)}
+.gantt{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh-s);overflow-x:auto}
+.gantt table{min-width:900px}
+.gantt td.bar{padding:10px 6px}
+.gb{height:22px;border-radius:6px;background:var(--blue);opacity:.9}
+.gb.alt{background:var(--ink3);opacity:.55}
+.gb.ok{background:var(--ok)}
+.gb.warn{background:var(--warn)}
+.gantt th.wk{font-size:10.5px;text-align:center;letter-spacing:.02em;white-space:nowrap}
+.gantt td.lbl{white-space:nowrap;font-weight:500;color:var(--ink)}
+.gantt td.lbl small{display:block;font-weight:400;color:var(--ink3);font-size:12px}
+.fix{border-left:4px solid var(--blue)}
+.src-list{font-size:13px;margin:14px 0 0;padding-left:18px}
+.src-list li{margin-bottom:6px}
+.correction{margin-top:18px;border:1px dashed color-mix(in srgb,var(--warn) 60%,var(--line));background:color-mix(in srgb,var(--warn) 7%,var(--card));border-radius:12px;padding:14px 18px;font-size:14px}
+@media (max-width:880px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#inicio" aria-label="HEKA"><svg role="img" aria-label="HEKA" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4500 4500"><g id="Layer 1"><path id="Path 0" fill-rule="evenodd" class="s0" d="m2195.18 154.15c-5.34 0.2-22.1 0.88-37.24 1.52-15.14 0.64-38.21 1.88-51.27 2.77-13.07 0.88-36.63 2.78-52.36 4.21-15.73 1.44-39.29 3.88-52.35 5.42-13.06 1.55-35.65 4.51-50.2 6.58-14.54 2.07-38.1 5.72-52.35 8.12-14.25 2.4-38.29 6.79-53.43 9.75-15.14 2.96-38.46 7.81-51.82 10.77-13.36 2.96-34.97 8-48.03 11.21-13.07 3.21-36.14 9.23-51.28 13.38-15.14 4.15-37.97 10.7-50.73 14.55-12.77 3.84-32.44 9.99-43.72 13.67-11.28 3.67-32.9 11.04-48.04 16.38-15.14 5.33-38.69 13.99-52.35 19.24-13.66 5.25-34.79 13.64-46.96 18.65-12.17 5.01-31.6 13.25-43.17 18.32-11.58 5.06-31.98 14.28-45.34 20.5-13.36 6.21-35.71 17.01-49.66 23.98-13.95 6.98-33.62 17.06-43.72 22.41-10.09 5.35-29.03 15.67-42.09 22.93-13.07 7.27-35.41 20.16-49.66 28.66-14.25 8.5-35.14 21.27-46.42 28.38-11.28 7.11-31.44 20.21-44.79 29.12-13.36 8.91-34.01 23.03-45.88 31.39-11.87 8.35-33.98 24.47-49.12 35.82-15.14 11.35-36.27 27.6-46.95 36.11-10.69 8.5-29.39 23.81-41.56 34.02-12.17 10.2-28.43 24.08-36.12 30.84-7.7 6.76-22.27 19.82-32.38 29.02-10.11 9.2-29.76 27.66-43.67 41.02-13.91 13.36-36.26 35.71-49.66 49.66-13.41 13.96-31.91 33.65-41.11 43.76-9.2 10.11-22.26 24.68-29.02 32.38-6.76 7.69-20.64 23.95-30.84 36.12-10.21 12.17-25.52 30.87-34.02 41.56-8.51 10.69-24.76 31.82-36.11 46.96-11.35 15.13-27.47 37.24-35.82 49.11-8.36 11.87-22.48 32.52-31.39 45.88-8.91 13.36-22.01 33.52-29.12 44.8-7.11 11.28-19.88 32.16-28.38 46.41-8.5 14.25-21.39 36.6-28.66 49.66-7.26 13.06-17.58 32-22.93 42.1-5.35 10.09-15.43 29.76-22.41 43.71-6.98 13.96-17.77 36.3-23.98 49.66-6.22 13.36-15.44 33.76-20.51 45.34-5.06 11.57-13.3 31-18.31 43.17-5.01 12.18-13.4 33.31-18.65 46.96-5.24 13.66-13.66 36.49-18.7 50.74-5.05 14.24-12.39 35.74-16.31 47.76-3.92 12.02-10.32 32.43-14.21 45.34-3.89 12.91-10.47 35.86-14.62 51-4.15 15.14-10.17 38.22-13.38 51.28-3.22 13.06-8.26 34.68-11.22 48.03-2.96 13.36-7.81 36.68-10.77 51.82-2.96 15.14-7.34 39.18-9.74 53.43-2.4 14.25-6.06 37.81-8.13 52.35-2.07 14.55-5.02 37.14-6.57 50.2-1.54 13.06-3.98 36.62-5.42 52.35-1.43 15.74-3.34 39.54-4.23 52.9-0.9 13.35-2.23 35.94-2.97 50.19-0.76 14.84-1.33 54.28-1.33 92.29 0 38.02 0.57 77.46 1.33 92.3 0.74 14.25 2.07 36.84 2.97 50.19 0.89 13.36 2.8 37.16 4.23 52.9 1.44 15.73 3.88 39.29 5.42 52.35 1.55 13.06 4.5 35.65 6.57 50.2 2.07 14.54 5.73 38.1 8.13 52.35 2.4 14.25 6.78 38.29 9.75 53.43 2.96 15.14 7.81 38.46 10.77 51.82 2.96 13.35 8 34.97 11.21 48.03 3.21 13.06 9.23 36.14 13.38 51.28 4.15 15.14 11 38.94 15.23 52.89 4.22 13.95 10.37 33.63 13.67 43.72 3.31 10.09 10.37 30.74 15.7 45.87 5.34 15.14 13.99 38.7 19.24 52.36 5.25 13.65 13.64 34.78 18.65 46.96 5.01 12.17 13.25 31.6 18.31 43.17 5.07 11.58 14.29 31.98 20.51 45.34 6.21 13.36 17 35.7 23.98 49.66 6.98 13.95 17.06 33.62 22.41 43.71 5.35 10.1 15.67 29.04 22.93 42.1 7.27 13.06 20.16 35.41 28.66 49.66 8.5 14.25 21.27 35.13 28.38 46.41 7.11 11.28 20.21 31.44 29.12 44.8 8.91 13.36 23.03 34 31.39 45.88 8.35 11.87 24.47 33.97 35.82 49.11 11.35 15.14 27.41 36.03 35.7 46.42 8.28 10.39 22.55 27.88 31.7 38.86 9.16 10.98 23.45 27.74 31.77 37.24 8.32 9.5 22.42 25.28 31.34 35.07 8.92 9.79 27.18 29.22 40.59 43.18 13.4 13.96 35.75 36.31 49.67 49.67 13.91 13.36 33.3 31.58 43.09 40.5 9.79 8.92 25.57 23.02 35.07 31.34 9.5 8.31 26.25 22.61 37.24 31.76 10.98 9.16 28.47 23.43 38.86 31.71 10.39 8.28 31.27 24.35 46.41 35.7 15.14 11.35 37.25 27.47 49.12 35.82 11.87 8.36 32.52 22.48 45.88 31.39 13.35 8.91 33.51 22.01 44.79 29.12 11.28 7.11 32.17 19.88 46.42 28.38 14.25 8.5 36.59 21.39 49.66 28.66 13.06 7.26 32.24 17.71 42.63 23.22 10.39 5.51 31.77 16.4 47.5 24.2 15.73 7.8 37.35 18.24 48.04 23.2 10.68 4.96 29.38 13.38 41.56 18.71 12.17 5.34 32.08 13.8 44.25 18.81 12.17 5.01 33.55 13.49 47.5 18.85 13.95 5.36 38.24 14.27 53.97 19.81 15.74 5.53 40.02 13.71 53.98 18.17 13.95 4.45 36.05 11.25 49.11 15.1 13.06 3.85 35.65 10.18 50.2 14.07 14.54 3.9 34.7 9.07 44.79 11.5 10.1 2.43 29.04 6.78 42.1 9.68 13.06 2.9 34.92 7.47 48.58 10.17 13.65 2.69 36.24 6.84 50.19 9.22 13.95 2.38 33.38 5.53 43.18 7.01 9.8 1.47 29.23 4.14 43.18 5.93 13.95 1.79 34.6 4.24 45.88 5.44 11.28 1.19 31.92 3.14 45.87 4.31 13.96 1.17 38 2.88 53.44 3.79 15.43 0.92 42.63 2.15 60.45 2.73 17.81 0.58 46.71 1.06 64.22 1.06 17.52 0 46.42-0.48 64.23-1.06 17.81-0.58 45.01-1.81 60.45-2.73 15.44-0.91 39.48-2.62 53.43-3.79 13.96-1.17 34.6-3.12 45.88-4.31 11.28-1.2 31.93-3.65 45.88-5.44 13.95-1.79 33.38-4.46 43.18-5.93 9.79-1.48 29.22-4.63 43.17-7.01 13.96-2.38 36.54-6.53 50.2-9.22 13.65-2.7 35.51-7.27 48.58-10.17 13.06-2.9 32-7.27 42.09-9.7 10.1-2.43 30.26-7.6 44.8-11.49 14.55-3.88 37.14-10.21 50.2-14.06 13.06-3.85 35.16-10.65 49.11-15.1 13.95-4.46 38.24-12.64 53.97-18.17 15.74-5.54 40.03-14.45 53.98-19.81 13.95-5.36 35.32-13.84 47.49-18.85 12.17-5.01 32.09-13.47 44.26-18.81 12.17-5.33 30.87-13.75 41.56-18.71 10.69-4.96 32.3-15.4 48.04-23.2 15.73-7.8 37.1-18.69 47.49-24.2 10.39-5.51 29.58-15.96 42.64-23.22 13.06-7.27 35.41-20.16 49.66-28.66 14.25-8.5 35.13-21.27 46.41-28.38 11.28-7.11 31.44-20.21 44.8-29.12 13.36-8.91 34-23.03 45.88-31.39 11.87-8.35 33.97-24.47 49.11-35.82 15.14-11.35 36.03-27.42 46.42-35.7 10.39-8.28 27.88-22.55 38.86-31.71 10.98-9.15 27.74-23.45 37.24-31.76 9.5-8.32 25.28-22.42 35.07-31.34 9.79-8.92 29.43-27.39 43.64-41.04 14.21-13.66 36.78-36.24 50.14-50.2 13.36-13.95 31.38-33.14 40.04-42.63 8.66-9.5 22.55-25.05 30.87-34.55 8.31-9.5 22.61-26.26 31.76-37.24 9.16-10.98 23.43-28.47 31.71-38.86 8.28-10.39 24.35-31.28 35.69-46.42 11.35-15.14 27.48-37.24 35.83-49.11 8.36-11.88 22.48-32.52 31.39-45.88 8.9-13.36 22.01-33.52 29.12-44.8 7.11-11.28 19.88-32.16 28.38-46.41 8.49-14.25 21.39-36.6 28.66-49.66 7.27-13.06 18.22-33.22 24.35-44.79 6.13-11.58 18.52-36.11 27.54-54.52 9.02-18.4 21.01-43.66 26.65-56.13 5.64-12.47 14.49-32.63 19.68-44.8 5.18-12.17 14.42-34.76 20.53-50.19 6.1-15.44 15.09-39 19.97-52.36 4.87-13.35 13.4-37.88 18.94-54.51 5.55-16.62 13.53-41.64 17.75-55.59 4.22-13.95 11.06-37.75 15.21-52.89 4.16-15.14 10.18-38.22 13.39-51.28 3.21-13.06 8.25-34.68 11.21-48.03 2.95-13.36 7.57-35.46 10.27-49.12 2.69-13.65 6.84-36.24 9.22-50.19 2.38-13.96 5.53-33.39 7-43.18 1.48-9.8 4.15-29.23 5.94-43.18 1.79-13.95 4.24-34.6 5.44-45.88 1.19-11.28 3.13-31.92 4.31-45.87 1.17-13.96 2.88-38 3.79-53.44 0.92-15.43 2.14-42.64 2.73-60.45 0.58-17.81 1.06-46.71 1.06-64.23 0-17.51-0.48-46.41-1.06-64.22-0.59-17.81-1.81-45.02-2.73-60.45-0.91-15.44-2.62-39.48-3.79-53.44-1.18-13.95-3.12-34.59-4.31-45.87-1.2-11.28-3.65-31.93-5.44-45.88-1.79-13.95-4.46-33.38-5.94-43.18-1.47-9.79-4.62-29.22-7-43.18-2.38-13.95-6.53-36.54-9.22-50.19-2.7-13.66-7.27-35.52-10.17-48.58-2.9-13.06-7.27-32-9.7-42.1-2.43-10.09-7.6-30.25-11.49-44.79-3.89-14.55-10.21-37.14-14.06-50.2-3.85-13.06-10.65-35.16-15.11-49.11-4.45-13.96-12.63-38.24-18.16-53.98-5.54-15.73-14.45-40.02-19.81-53.97-5.36-13.95-13.84-35.32-18.85-47.5-5.01-12.17-13.47-32.08-18.81-44.25-5.33-12.17-13.75-30.88-18.71-41.56-4.96-10.69-15.4-32.3-23.2-48.04-7.8-15.73-18.69-37.1-24.2-47.49-5.51-10.39-15.96-29.58-23.23-42.64-7.26-13.06-20.16-35.41-28.65-49.66-8.5-14.25-21.27-35.13-28.38-46.41-7.11-11.28-20.22-31.44-29.12-44.8-8.91-13.36-23.03-34.01-31.39-45.88-8.35-11.87-24.48-33.98-35.83-49.11-11.34-15.14-27.41-36.03-35.69-46.42-8.28-10.39-22.55-27.88-31.71-38.86-9.15-10.99-23.45-27.74-31.76-37.24-8.32-9.5-22.42-25.28-31.34-35.07-8.92-9.79-27.18-29.22-40.59-43.18-13.4-13.96-35.76-36.31-49.67-49.67-13.92-13.36-33.31-31.58-43.09-40.5-9.79-8.92-25.57-23.02-35.07-31.34-9.5-8.31-26.26-22.61-37.24-31.76-10.98-9.16-28.47-23.43-38.86-31.71-10.39-8.28-31.28-24.35-46.42-35.7-15.14-11.35-37.24-27.47-49.11-35.82-11.88-8.36-32.52-22.48-45.88-31.39-13.36-8.91-33.52-22.01-44.8-29.12-11.28-7.11-32.16-19.88-46.41-28.38-14.25-8.5-36.6-21.39-49.66-28.66-13.06-7.26-32-17.58-42.1-22.93-10.09-5.35-29.76-15.43-43.72-22.41-13.95-6.97-36.29-17.77-49.65-23.98-13.36-6.22-33.76-15.44-45.34-20.5-11.58-5.07-31.01-13.31-43.18-18.32-12.17-5.01-33.3-13.4-46.95-18.65-13.66-5.25-37.22-13.9-52.36-19.24-15.14-5.33-35.78-12.39-45.87-15.69-10.1-3.3-29.77-9.46-43.72-13.68-13.95-4.22-37.76-11.08-52.89-15.23-15.14-4.15-38.22-10.17-51.28-13.38-13.06-3.21-34.68-8.25-48.03-11.21-13.36-2.96-36.68-7.81-51.82-10.77-15.14-2.96-39.18-7.35-53.43-9.75-14.25-2.4-37.81-6.05-52.36-8.12-14.54-2.07-37.13-5.03-50.19-6.58-13.06-1.54-36.38-3.96-51.81-5.38-15.44-1.41-39.49-3.33-53.44-4.25-13.95-0.93-35.32-2.2-47.49-2.82-12.17-0.62-48.61-1.28-80.96-1.48-32.36-0.19-63.21-0.19-68.55 0.01zm12.41 122.57c21.67-0.38 50.58-0.58 64.23-0.43 13.66 0.15 38.67 0.77 55.59 1.4 16.93 0.62 41.21 1.84 53.98 2.7 12.76 0.87 34.38 2.56 48.03 3.77 13.66 1.21 35.03 3.38 47.5 4.83 12.47 1.44 31.9 3.86 43.18 5.38 11.28 1.51 35.32 5.19 53.43 8.17 18.11 2.98 47.25 8.29 64.77 11.79 17.51 3.5 42.53 8.84 55.59 11.85 13.06 3.02 34.92 8.37 48.58 11.89 13.65 3.51 35.27 9.36 48.03 12.99 12.77 3.62 32.44 9.46 43.72 12.96 11.28 3.5 34.11 10.95 50.73 16.56 16.63 5.6 43.1 15.04 58.84 20.96 15.73 5.92 37.59 14.43 48.57 18.9 10.98 4.48 29.2 12.12 40.48 16.99 11.28 4.88 29.25 12.89 39.94 17.81 10.69 4.92 29.87 14 42.64 20.18 12.76 6.19 33.65 16.74 46.42 23.46 12.76 6.72 34.13 18.29 47.49 25.71 13.36 7.42 37.41 21.35 53.44 30.97 16.03 9.61 40.31 24.66 53.97 33.44 13.65 8.78 34.06 22.31 45.34 30.06 11.28 7.76 27.31 18.97 35.62 24.92 8.31 5.95 25.55 18.67 38.32 28.27 12.76 9.61 31.71 24.22 42.1 32.49 10.39 8.26 26.66 21.52 36.16 29.47 9.5 7.95 24.8 21.04 34 29.09 9.2 8.06 25.48 22.63 36.16 32.39 10.69 9.76 37.94 36.24 60.55 58.85 22.61 22.6 49.09 49.84 58.85 60.52 9.75 10.69 24.31 26.96 32.37 36.17 8.05 9.2 21.14 24.5 29.09 34 7.94 9.5 21.22 25.77 29.49 36.16 8.28 10.39 24.86 32.01 36.85 48.04 11.99 16.03 27.77 37.64 35.07 48.03 7.29 10.39 20.65 30.07 29.68 43.72 9.03 13.66 22.63 34.79 30.22 46.96 7.6 12.17 19.5 31.84 26.45 43.72 6.95 11.87 17.5 30.33 23.45 41.02 5.95 10.68 16.32 29.87 23.04 42.63 6.72 12.77 17.78 34.63 24.57 48.58 6.78 13.95 17.08 35.81 22.87 48.58 5.8 12.76 14.78 33.16 19.96 45.33 5.19 12.17 13.94 33.55 19.45 47.5 5.51 13.95 13.91 36.05 18.67 49.11 4.75 13.07 12.3 34.68 16.77 48.04 4.47 13.36 11.76 36.19 16.19 50.73 4.43 14.55 10.75 36.17 14.03 48.04 3.29 11.87 8.65 32.28 11.91 45.34 3.27 13.06 7.89 32.25 10.28 42.64 2.39 10.39 6.75 30.79 9.7 45.33 2.95 14.55 7.09 36.17 9.2 48.04 2.11 11.87 5.29 31.06 7.07 42.64 1.78 11.57 4.44 30.03 5.91 41.02 1.48 10.98 3.67 28.71 4.88 39.4 1.21 10.68 3.17 30.11 4.35 43.18 1.18 13.06 2.87 34.67 3.75 48.03 0.88 13.36 2.17 36.19 2.85 50.74 0.69 14.54 1.25 51.46 1.25 82.03 0 30.58-0.56 67.5-1.25 82.04-0.68 14.55-1.97 37.38-2.85 50.74-0.88 13.36-2.33 32.54-3.22 42.64-0.89 10.09-2.85 29.52-4.35 43.18-1.51 13.65-3.94 33.81-5.41 44.79-1.48 10.99-4.13 29.44-5.91 41.02-1.78 11.58-4.96 30.77-7.07 42.64-2.11 11.87-6.25 33.49-9.2 48.04-2.96 14.54-7.08 33.97-9.16 43.17-2.08 9.21-7.21 30.34-11.39 46.96-4.18 16.63-11.15 42.61-15.49 57.75-4.34 15.14-11.8 39.92-16.58 55.05-4.77 15.14-12.52 38.46-17.21 51.82-4.7 13.36-11.81 33.03-15.81 43.72-4 10.68-11.18 29.14-15.95 41.02-4.78 11.87-12.3 30.09-16.72 40.48-4.43 10.39-12.67 29.09-18.32 41.56-5.66 12.46-18.21 38.69-27.9 58.29-9.69 19.59-23.53 46.55-30.76 59.91-7.23 13.35-19.71 35.7-27.75 49.65-8.03 13.95-21.66 36.78-30.29 50.74-8.62 13.95-23.54 37.26-33.16 51.81-9.61 14.55-23.44 34.95-30.73 45.34-7.3 10.39-23.07 32-35.06 48.03-11.98 16.03-30.56 40.08-41.28 53.44-10.72 13.35-25.66 31.57-33.21 40.48-7.54 8.9-22.58 26.15-33.41 38.32-10.84 12.17-28.21 31.11-38.61 42.09-10.41 10.99-33.68 34.55-51.72 52.36-18.04 17.81-40.82 39.68-50.62 48.6-9.79 8.92-25.58 23.02-35.08 31.33-9.5 8.32-25.77 22.19-36.16 30.83-10.39 8.64-26.42 21.68-35.62 28.98-9.2 7.3-27.18 21.15-39.94 30.77-12.77 9.61-31.95 23.73-42.64 31.37-10.69 7.63-31.82 22.18-46.96 32.33-15.14 10.14-39.67 26-54.51 35.24-14.84 9.24-35.73 21.9-46.42 28.13-10.68 6.24-28.17 16.21-38.86 22.16-10.68 5.95-29.87 16.32-42.64 23.04-12.76 6.72-34.62 17.77-48.57 24.56-13.95 6.78-35.81 17.07-48.58 22.87-12.76 5.8-33.16 14.79-45.33 19.98-12.17 5.18-33.79 14.02-48.04 19.65-14.25 5.62-37.08 14.26-50.73 19.19-13.66 4.94-36.73 12.94-51.28 17.77-14.54 4.84-37.62 12.15-51.27 16.25-13.66 4.1-34.55 10.12-46.42 13.38-11.87 3.25-32.28 8.59-45.34 11.86-13.06 3.26-35.89 8.61-50.73 11.88-14.84 3.27-36.95 7.88-49.12 10.25-12.17 2.36-35.24 6.5-51.27 9.18-16.03 2.69-41.53 6.58-56.67 8.66-15.14 2.08-38.7 5.01-52.36 6.51-13.65 1.49-36.24 3.69-50.19 4.87-13.95 1.19-38.48 2.91-54.51 3.84-16.03 0.93-48.09 2.11-71.25 2.62-23.59 0.52-60.84 0.52-84.74 0-23.45-0.51-51.62-1.44-62.6-2.07-10.99-0.62-27.02-1.62-35.63-2.21-8.6-0.6-26.58-2.07-39.94-3.27-13.35-1.2-34.73-3.38-47.49-4.85-12.77-1.46-33.9-4.14-46.96-5.95-13.06-1.8-36.86-5.47-52.89-8.14-16.03-2.67-42.26-7.46-58.29-10.64-16.03-3.19-40.08-8.29-53.44-11.34-13.35-3.06-32.06-7.5-41.55-9.88-9.5-2.38-27.96-7.25-41.02-10.82-13.07-3.57-36.38-10.31-51.82-14.98-15.43-4.67-41.91-13.17-58.83-18.88-16.92-5.72-42.91-14.94-57.75-20.48-14.84-5.55-36.22-13.82-47.5-18.38-11.28-4.55-30.46-12.57-42.63-17.8-12.18-5.24-31.85-13.98-43.72-19.43-11.88-5.45-35.68-16.89-52.9-25.43-17.21-8.54-41.99-21.29-55.05-28.33-13.06-7.03-33.95-18.64-46.42-25.79-12.46-7.15-29.46-17.11-37.78-22.12-8.31-5.02-23.85-14.62-34.54-21.35-10.69-6.73-30.12-19.37-43.18-28.09-13.06-8.72-32.25-21.84-42.64-29.15-10.39-7.31-30.06-21.64-43.71-31.85-13.66-10.21-34.79-26.49-46.96-36.19-12.17-9.69-29.42-23.73-38.32-31.18-8.91-7.46-23.97-20.36-33.46-28.66-9.5-8.31-26.02-23.09-36.71-32.85-10.68-9.76-37.91-36.25-60.49-58.86-22.59-22.61-48.79-49.6-58.22-59.99-9.44-10.39-23.75-26.42-31.81-35.63-8.06-9.2-20.76-24.01-28.22-32.92-7.45-8.91-21.48-26.15-31.17-38.32-9.69-12.17-25.97-33.3-36.18-46.96-10.21-13.65-24.89-33.81-32.63-44.8-7.73-10.98-23.05-33.57-34.03-50.19-10.98-16.62-26.52-40.91-34.54-53.97-8.02-13.06-21.13-35.17-29.13-49.12-8-13.95-19.81-35.08-26.24-46.95-6.43-11.88-19.09-36.41-28.15-54.52-9.05-18.11-20.92-42.64-26.37-54.51-5.45-11.87-14.52-32.28-20.15-45.34-5.64-13.06-14.52-34.43-19.74-47.49-5.23-13.06-13.39-34.2-18.14-46.96-4.75-12.76-12.85-35.59-17.99-50.73-5.15-15.14-13.24-40.16-17.99-55.6-4.75-15.43-12.3-41.42-16.77-57.75-4.47-16.32-11.22-42.55-14.99-58.29-3.77-15.73-9.27-40.02-12.23-53.97-2.95-13.95-7.34-36.05-9.74-49.12-2.41-13.06-5.81-32.73-7.58-43.71-1.76-10.99-4.67-30.42-6.46-43.18-1.79-12.77-4.47-33.9-5.96-46.96-1.49-13.06-3.69-34.68-4.89-48.04-1.19-13.35-2.91-35.46-3.8-49.11-0.9-13.66-2.12-36.49-2.72-50.73-0.59-14.25-1.08-49.96-1.08-79.35 0-29.38 0.48-64.84 1.06-78.8 0.59-13.95 1.57-33.38 2.19-43.17 0.62-9.8 2.09-29.72 3.27-44.26 1.18-14.55 3.61-39.56 5.4-55.59 1.79-16.03 4.72-39.59 6.52-52.36 1.8-12.76 4.71-32.19 6.47-43.18 1.77-10.98 5.17-30.65 7.58-43.71 2.4-13.07 6.79-35.17 9.75-49.12 2.96-13.95 7.98-36.3 11.16-49.65 3.17-13.36 8.75-35.46 12.4-49.12 3.64-13.65 8.83-32.36 11.51-41.56 2.69-9.2 7.74-25.96 11.24-37.24 3.49-11.28 9.96-31.2 14.38-44.26 4.41-13.06 11.93-34.43 16.7-47.49 4.78-13.07 13.03-34.68 18.34-48.04 5.31-13.36 14.75-36.19 20.99-50.73 6.23-14.55 16.04-36.65 21.8-49.12 5.76-12.47 17.64-37 26.4-54.51 8.76-17.52 21.18-41.56 27.61-53.44 6.42-11.87 18.22-33 26.22-46.95 8-13.95 21.11-36.06 29.14-49.12 8.03-13.06 23.41-37.1 34.18-53.43 10.77-16.33 24.88-37.21 31.35-46.42 6.47-9.2 18.54-25.96 26.82-37.24 8.28-11.28 22.24-29.74 31.01-41.02 8.78-11.28 23.12-29.25 31.87-39.94 8.75-10.68 21.54-25.98 28.42-33.98 6.88-8.01 19.02-21.85 26.97-30.77 7.95-8.91 23.81-26.17 35.25-38.34 11.45-12.17 33.84-35.02 49.78-50.78 15.93-15.77 35.77-34.97 44.08-42.67 8.31-7.71 23.85-21.77 34.54-31.26 10.69-9.48 26.96-23.6 36.16-31.38 9.2-7.77 27.91-23.08 41.56-34.01 13.66-10.94 35.27-27.7 48.04-37.25 12.76-9.55 31.22-23.08 41.02-30.05 9.79-6.98 29.95-20.82 44.79-30.77 14.85-9.94 36.22-23.88 47.5-30.98 11.28-7.11 28.28-17.55 37.78-23.21 9.5-5.66 24.07-14.19 32.39-18.96 8.31-4.77 22.39-12.68 31.3-17.57 8.91-4.9 27.61-14.86 41.56-22.14 13.95-7.28 37.27-18.93 51.81-25.9 14.55-6.97 36.16-17.02 48.04-22.34 11.87-5.32 29.12-12.84 38.32-16.73 9.2-3.88 29.36-12.06 44.8-18.17 15.43-6.12 39.48-15.24 53.43-20.26 13.95-5.03 38-13.29 53.43-18.36 15.44-5.07 38.03-12.2 50.2-15.84 12.17-3.64 34.27-9.93 49.11-13.98 14.85-4.05 39.38-10.31 54.52-13.92 15.14-3.61 37.72-8.75 50.19-11.41 12.47-2.66 34.33-7.02 48.58-9.68 14.25-2.67 38.29-6.8 53.43-9.2 15.14-2.39 40.88-6.06 57.21-8.15 16.33-2.08 39.16-4.75 50.74-5.93 11.57-1.18 33.67-3.12 49.11-4.31 15.44-1.19 38.02-2.72 50.2-3.4 12.17-0.67 39.85-1.54 61.52-1.92zm-924.01 1256.87v598.56h177.03v-371.33h458.77v371.33h175.95v-1197.12h-175.95v669.27h-458.77v-669.27h-177.03zm1101.05-3.23v592.08l703.26-0.54 0.54-170.02h-526.77v-282.81h466.32v-163h-466.32v-398.32h512.74v-169.48h-689.77zm342.59 732.64c-3.04 7.3-111.71 274.61-241.5 594.02-129.79 319.41-235.99 581.11-236 581.56-0.01 0.44 41.14 0.8 91.46 0.8l91.48-0.02c16.78-51.34 21.95-65.05 26.33-73.92 3.88-7.83 7.96-14.44 10.34-16.73l3.94-3.78c467.14 0.73 525.62 1.12 527.73 2.15 1.48 0.73 4.3 3.22 6.27 5.53 1.97 2.31 5.73 8.57 8.36 13.91 2.63 5.35 7.2 17.25 10.16 26.45 2.96 9.2 7.12 22.8 9.24 30.22 2.12 7.42 4.2 14.1 4.61 14.83 0.59 1.04 20.59 1.28 92.18 1.08l91.41-0.25c-378.99-920.24-489.35-1187.79-489.75-1188.27-0.4-0.47-3.22 5.12-6.26 12.42zm-96.38 658.5c56.05-145.02 102.23-263.3 102.62-262.85 0.39 0.46 47.93 119.35 105.65 264.21 57.72 144.87 105.13 264 105.35 264.74 0.32 1.08-41.77 1.35-207.93 1.35-197.83 0-208.32-0.09-207.97-1.89 0.2-1.04 46.23-120.54 102.28-265.56zm-1340.52-73.39l0.28 595.05 176.49 0.54-0.03-396.7c5.27-8.36 9.01-13.71 11.72-17.27 2.7-3.56 19.8-24.69 37.99-46.96 18.2-22.26 38.77-47.76 45.72-56.67 6.96-8.9 16.63-21.88 21.5-28.84 4.87-6.97 11.04-16.85 13.71-21.96 4.84-9.26 4.89-9.32 11.07-11.37l6.2-2.05c24.4 48.1 90.59 178.89 162.82 321.67l131.33 259.61c139.3 0.42 179.72 0.18 179.71-0.27-0.01-0.44-81.81-165.23-181.78-366.2-99.98-200.97-181.94-365.9-182.14-366.52-0.21-0.62 72.94-102.14 162.55-225.61 89.61-123.46 164.17-226.08 165.7-228.04l2.77-3.56-201.32 0.1-386.98 525.29-0.54-525.29h-177.04z"/></g></svg></a>
+    <div class="top__txt"><b>HEKA</b>Informe técnico</div>
+    <span class="top__date">27 de septiembre de 2026 · versión 2</span>
+    <button class="theme-btn" type="button" id="themeBtn" aria-label="Cambiar entre modo claro y oscuro">Modo oscuro</button>
+  </div>
+</header>
+
+<main id="inicio">
+  <div class="wrap">
+    <div class="hero reveal">
+      <div class="eyebrow">Proyecto EQUINOX 2027</div>
+      <h1>La pasarela de pago <em>recomendada.</em></h1>
+      <p class="lead">Revisamos el código del sitio de EQUINOX, que la Fundación Sideralis organiza del 16 al 19 de marzo de 2027 en Quito, y contrastamos en línea las condiciones vigentes de cada proveedor para elegir la pasarela que mejor atiende a compradores internacionales, protege a la fundación frente al fraude y puede estar en producción a tiempo para abrir el registro.</p>
+      <div class="meta">
+        <span class="pill">Laravel 12 · PHP 8.2</span>
+        <span class="pill">Sitio en inglés</span>
+        <span class="pill">Cobro en USD con tarjetas de todo el mundo</span>
+        <span class="pill">170 días hasta el evento</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">01 · Lo que encontramos</div>
+      <h2>El estado actual del <em>proyecto.</em></h2>
+      <div class="grid">
+        <div class="card fact reveal">
+          <h3>Todavía no existe flujo de cobro</h3>
+          <p>El sitio es una landing en Blade con dos formularios, la lista de interesados en <code>POST /join</code> y la solicitud de patrocinio en <code>POST /sponsor</code>, que se guardan en las tablas <code>leads</code> y <code>sponsor_inquiries</code>, sin dependencias de pagos ni modelos de órdenes o entradas.</p>
+          <span class="src">routes/web.php · composer.json</span>
+        </div>
+        <div class="card fact reveal">
+          <h3>La venta de entradas es el siguiente paso</h3>
+          <p>La confirmación de la lista promete avisar "as soon as registration opens", de modo que el primer cobro real será el registro pagado de asistentes a la conferencia y a la experiencia Stargate.</p>
+          <span class="src">LandingController.php</span>
+        </div>
+        <div class="card fact reveal">
+          <h3>La mayoría de compradores estará fuera del Ecuador</h3>
+          <p>Todo el contenido está en inglés y se dirige a empresas, inversionistas, gobiernos y agencias del ecosistema espacial global, por lo que la pasarela tiene que aceptar tarjetas emitidas en cualquier país, autenticarlas con 3D Secure y mostrar el checkout en inglés.</p>
+          <span class="src">landing.blade.php</span>
+        </div>
+        <div class="card fact reveal">
+          <h3>Buena base de seguridad, con pendientes</h3>
+          <p>El proyecto ya tiene validación, honeypot, límite de 10 peticiones por minuto, <code>.env</code> excluido de git y una autenticación básica que compara con <code>hash_equals</code>, aunque aún no define cabeceras de seguridad como CSP o HSTS y las sesiones no se cifran.</p>
+          <span class="src">bootstrap/app.php · AdminBasicAuth.php · .gitignore</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">02 · Recomendación</div>
+      <h2>Nuestra elección para <em>EQUINOX.</em></h2>
+      <p class="lead">Hicimos el análisis sin dar por sentada ninguna opción, y Payphone resulta la mejor alternativa para abrir la venta de entradas, siempre que antes se resuelva por escrito el único punto que podría volverla inadecuada para un evento de este tamaño, que son sus límites de retiro.</p>
+      <div class="verdict">
+        <div class="win reveal">
+          <span class="tag">Pasarela principal para entradas</span>
+          <h3>Payphone</h3>
+          <p>Acepta Visa, Mastercard, Diners y Discover emitidas por bancos de cualquier país, autentica con 3D Secure, está certificada en PCI DSS 4.0 y su cajita de pagos admite el parámetro <code>lang=en</code>, con lo que el asistente extranjero paga en inglés sin salir del sitio. La integración técnica toma horas, la afiliación exige mucha menos documentación que un gateway bancario y el dinero se acredita al saldo en segundos, con retiro a la cuenta de la fundación en 24 a 48 horas hábiles.</p>
+          <p>Su comisión publicada es del 5 % más IVA, es decir 5,75 % efectivo y sin mensualidad, lo cual es más caro que Kushki a partir de volúmenes medianos, pero el ahorro de tiempo pesa más cuando quedan 170 días para el evento y lo ideal es vender durante al menos cuatro meses.</p>
+        </div>
+        <div class="stack">
+          <div class="card reveal" style="border-left:4px solid var(--warn)">
+            <h3>Condición para confirmarla</h3>
+            <p>Fuentes públicas reportan un tope de retiro de 5.000 USD diarios y 20.000 USD mensuales. Si la venta proyectada lo supera, hay que pedir a Payphone, antes de firmar, la ampliación de límites para la cuenta empresarial de la fundación.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Plan de contingencia en paralelo</h3>
+            <p>Iniciar desde ahora la afiliación con Kushki, que tiene PCI DSS nivel 1, 3D Secure 2.0, liquidación directa a banco y tarifas negociables, para activarla si Payphone no amplía los límites o si el volumen justifica bajar la comisión.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Patrocinios</h3>
+            <p>Factura electrónica y transferencia local o SWIFT, porque evita comisiones porcentuales sobre montos altos y es el medio que esperan los departamentos financieros internacionales.</p>
+          </div>
+        </div>
+      </div>
+      <div class="correction reveal"><strong>Corrección respecto de la versión anterior.</strong> Indicamos que PayPal complicaba el retiro hacia bancos ecuatorianos, y al verificarlo encontramos que desde 2024 permite vincular cuentas del Ecuador, con retiros de hasta siete días hábiles, por lo que ahora lo evaluamos como medio secundario opcional para compradores extranjeros.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">03 · Comparativa</div>
+      <h2>Las opciones frente a <em>frente.</em></h2>
+      <p class="lead">Calificamos cada proveedor del 1 al 5 con mayor peso para la aceptación de tarjetas extranjeras, la seguridad, el tiempo hasta producción y la liquidación en el Ecuador.</p>
+      <div class="tbl-wrap reveal">
+        <table>
+          <thead>
+            <tr><th>Proveedor</th><th>Tarjetas extranjeras</th><th>Seguridad</th><th>Comisión</th><th>Liquidación</th><th>Tiempo hasta producción</th><th>Riesgo principal</th><th>Nota</th></tr>
+          </thead>
+          <tbody>
+            <tr class="best"><th>Payphone</th><td><span class="t ok">Visa, MC, Diners, Discover</span></td><td><span class="t ok">PCI DSS 4.0 · 3DS</span></td><td>5 % + IVA, sin mensualidad</td><td>Inmediata al saldo, 24 a 48 h al banco</td><td><span class="t ok">1 a 2 semanas</span></td><td>Límites de retiro que deben ampliarse</td><td class="score">4.5</td></tr>
+            <tr><th>Kushki</th><td><span class="t ok">Sí</span></td><td><span class="t ok">PCI DSS nivel 1 · 3DS 2.0</span></td><td>Negociada, con mínimo mensual</td><td>Directa al banco en unas 29 h hábiles</td><td><span class="t warn">4 a 8 semanas</span></td><td>KYB exigente y afiliación con banco adquirente</td><td class="score">4.2</td></tr>
+            <tr><th>PayPal</th><td><span class="t ok">Sí, más billetera</span></td><td><span class="t ok">Antifraude propio</span></td><td>Alta en ventas transfronterizas</td><td>Hasta 7 días hábiles</td><td><span class="t ok">Días</span></td><td>Costo elevado y congelamiento de fondos por disputas</td><td class="score">3.3</td></tr>
+            <tr><th>PlacetoPay</th><td><span class="t ok">Sí</span></td><td><span class="t ok">PCI DSS · 3DS</span></td><td>Negociada</td><td>Según banco</td><td><span class="t warn">Semanas</span></td><td>Proceso comercial formal</td><td class="score">3.6</td></tr>
+            <tr><th>Datafast</th><td><span class="t warn">Depende del producto</span></td><td><span class="t ok">3DS integrado</span></td><td>La cobra cada banco adquirente</td><td>De 24 h a semanal según banco</td><td><span class="t bad">6 a 10 semanas</span></td><td>Afiliación separada con cada banco y control de calidad</td><td class="score">3.0</td></tr>
+            <tr><th>Stripe</th><td><span class="t ok">Sí</span></td><td><span class="t ok">PCI DSS nivel 1</span></td><td>Estándar internacional</td><td>No disponible para el Ecuador</td><td><span class="t bad">Meses</span></td><td>Requiere sociedad en el exterior</td><td class="score">1.8</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Los tiempos hasta producción son estimaciones que suman afiliación, integración y pruebas, y deben confirmarse con cada proveedor. Las comisiones negociadas se fijan en la propuesta comercial según volumen y tipo de entidad.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">04 · Pagos internacionales</div>
+      <h2>Vender a compradores de todo el <em>mundo.</em></h2>
+      <p class="lead">Una pasarela local que acepta tarjetas extranjeras es suficiente, porque EQUINOX cobra en dólares y el comprador ve en su estado de cuenta la conversión que haga su propio banco, aunque hay que cuidar la tasa de aprobación y los contracargos.</p>
+      <div class="kpis">
+        <div class="kpi ok reveal"><b>USD</b><span>Moneda única de cobro, sin conversión del lado de la fundación.</span></div>
+        <div class="kpi reveal"><b>lang=en</b><span>Checkout de Payphone en inglés, coherente con el resto del sitio.</span></div>
+        <div class="kpi warn reveal"><b>3DS</b><span>Obligatorio para trasladar al emisor la responsabilidad por fraude en tarjetas extranjeras.</span></div>
+        <div class="kpi bad reveal"><b>Contracargos</b><span>Más frecuentes en eventos y con tarjetas del exterior, requieren política publicada y evidencia.</span></div>
+      </div>
+      <div class="two">
+        <div class="card reveal">
+          <h3>Cobros que entran desde el exterior</h3>
+          <ul class="chk">
+            <li>Pedir al comprador extranjero pasaporte, correo y teléfono reales, porque Payphone rechaza transacciones con datos estáticos o ficticios del titular.</li>
+            <li>Mostrar el precio final en USD con impuestos antes de pagar, y avisar que el banco emisor puede cobrar un recargo por compra internacional.</li>
+            <li>Ofrecer PayPal como segundo medio solo si la tasa de rechazo de tarjetas extranjeras supera lo aceptable durante la preventa.</li>
+            <li>Para grupos corporativos y delegaciones de gobierno, emitir factura y aceptar transferencia SWIFT en lugar de tarjeta.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>Pagos que salen hacia el exterior</h3>
+          <ul class="chk warn">
+            <li>Los pagos a conferencistas, proveedores o plataformas extranjeras quedan fuera del alcance de la pasarela y se hacen por transferencia bancaria.</li>
+            <li>Esas salidas de dinero están gravadas con el Impuesto a la Salida de Divisas y pueden requerir retenciones de impuesto a la renta, lo cual debe revisar el área tributaria antes de firmar cada contrato.</li>
+            <li>Los reembolsos a tarjetas extranjeras deben procesarse siempre por la pasarela, nunca con transferencias manuales al comprador.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">05 · Seguridad</div>
+      <h2>Cómo proteger cada <em>cobro.</em></h2>
+      <p class="lead">El principio que guía el diseño es que el servidor de EQUINOX nunca vea ni guarde datos de tarjeta, y que ninguna orden se marque como pagada sin que el propio servidor lo confirme con Payphone usando sus credenciales privadas.</p>
+      <div class="flow reveal" role="img" aria-label="Flujo de pago seguro entre el comprador, el sitio de EQUINOX y Payphone">
+        <svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ar" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+          <rect class="bx" x="10" y="20" width="200" height="74" rx="10"/>
+          <text class="t1" x="26" y="48">1. Comprador</text>
+          <text class="t2" x="26" y="68">Elige entrada y datos,</text>
+          <text class="t2" x="26" y="84">nunca envía la tarjeta al sitio</text>
+          <rect class="bx b" x="250" y="20" width="200" height="74" rx="10"/>
+          <text class="t1" x="266" y="48">2. Servidor EQUINOX</text>
+          <text class="t2" x="266" y="68">Calcula precio desde la base</text>
+          <text class="t2" x="266" y="84">y crea la orden pendiente</text>
+          <rect class="bx b" x="490" y="20" width="200" height="74" rx="10"/>
+          <text class="t1" x="506" y="48">3. Cajita Payphone</text>
+          <text class="t2" x="506" y="68">Captura tarjeta y 3DS</text>
+          <text class="t2" x="506" y="84">en el dominio de Payphone</text>
+          <rect class="bx" x="730" y="20" width="160" height="74" rx="10"/>
+          <text class="t1" x="746" y="48">4. Retorno</text>
+          <text class="t2" x="746" y="68">id y clientTransactionId</text>
+          <text class="t2" x="746" y="84">en la URL de respuesta</text>
+          <rect class="bx g" x="250" y="150" width="440" height="80" rx="10"/>
+          <text class="t1" x="266" y="178">5. Confirmación servidor a servidor, en menos de 5 minutos</text>
+          <text class="t2" x="266" y="198">POST /api/confirm con el token privado, verifica monto, moneda y estado,</text>
+          <text class="t2" x="266" y="216">y solo entonces marca la orden como pagada y emite la entrada con QR</text>
+          <path class="ln" d="M210,57 H246" marker-end="url(#ah)"/>
+          <path class="ln" d="M450,57 H486" marker-end="url(#ah)"/>
+          <path class="ln" d="M690,57 H726" marker-end="url(#ah)"/>
+          <path class="ln" d="M810,94 V190 H694" marker-end="url(#ah)"/>
+          <path class="ln d" d="M590,94 V146" marker-end="url(#ah)"/>
+          <text class="t2" x="598" y="126">webhook de respaldo</text>
+        </svg>
+      </div>
+      <div class="two">
+        <div class="card reveal">
+          <h3>Controles del flujo de pago</h3>
+          <ul class="chk ok">
+            <li>La tarjeta solo se digita en la cajita de Payphone, lo que deja al sitio en el alcance mínimo de PCI DSS y evita guardar o registrar en logs cualquier dato de tarjeta.</li>
+            <li>El precio, los impuestos y el cupo se calculan en el servidor, y la respuesta de confirmación se compara contra el monto y la moneda de la orden.</li>
+            <li>Cada orden usa un <code>clientTransactionId</code> único, y la confirmación es idempotente para que un reintento o un webhook duplicado no emita dos entradas.</li>
+            <li>La confirmación corre en la URL de retorno, en el webhook y en un trabajo de cola que reintenta, porque Payphone reversa el cobro si no se confirma en cinco minutos.</li>
+            <li>El webhook se trata como aviso y nunca como prueba de pago, y solo se exceptúa de CSRF esa ruta concreta.</li>
+            <li>Límite de intentos por IP y por correo en el checkout para frenar la prueba masiva de tarjetas robadas.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>Controles del sitio y del servidor</h3>
+          <ul class="chk">
+            <li>Token y StoreID solo en variables de entorno o gestor de secretos, distintos para pruebas y producción, con rotación al salir en vivo y ante cualquier sospecha.</li>
+            <li>Cabeceras <code>Strict-Transport-Security</code>, <code>Content-Security-Policy</code> que permita únicamente los dominios de Payphone, <code>X-Content-Type-Options</code> y <code>Referrer-Policy: origin-when-cross-origin</code>, que la documentación de Payphone recomienda.</li>
+            <li><code>APP_DEBUG=false</code>, <code>SESSION_ENCRYPT=true</code> y cookies <code>Secure</code>, <code>HttpOnly</code> y <code>SameSite</code> en producción.</li>
+            <li>Reemplazar la autenticación básica de <code>/admin</code> por usuarios con contraseña robusta y segundo factor antes de exponer datos de compradores.</li>
+            <li>Bitácora de auditoría de cada cambio de estado de orden, reembolso y acceso administrativo.</li>
+            <li>Análisis estático, revisión de dependencias con <code>composer audit</code> y una prueba dinámica tipo OWASP ZAP antes de producción.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">06 · Requisitos</div>
+      <h2>Lo que hay que tener <em>listo.</em></h2>
+      <div class="grid">
+        <div class="card reveal">
+          <h3>Documentos de la fundación</h3>
+          <ul class="chk">
+            <li>RUC de la Fundación Sideralis con la actividad correspondiente.</li>
+            <li>Estatutos y acuerdo ministerial que aprueba la fundación.</li>
+            <li>Nombramiento vigente del representante legal, con su cédula.</li>
+            <li>Certificado bancario de la cuenta a nombre de la fundación.</li>
+            <li>Nómina de directivos o miembros como beneficiarios finales.</li>
+            <li>Para Kushki en modelo gateway, además, declaraciones recientes de IVA y del impuesto a la renta.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>Requisitos técnicos</h3>
+          <ul class="chk">
+            <li>Dominio definitivo con certificado TLS válido, porque la cajita solo funciona en el dominio registrado.</li>
+            <li>Aplicación tipo WEB en Payphone Developer con dominio y URL de respuesta.</li>
+            <li>URL de webhook pública por HTTPS y salida a internet hacia la API de confirmación.</li>
+            <li>Base de datos MySQL en producción, cola de trabajos activa y correo transaccional con SPF, DKIM y DMARC.</li>
+            <li>Ambiente de pruebas separado con credenciales de sandbox.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>Requisitos legales y tributarios</h3>
+          <ul class="chk">
+            <li>Términos de compra en inglés y español con políticas de reembolso, cancelación y transferencia de entradas.</li>
+            <li>Aviso de privacidad conforme a la Ley Orgánica de Protección de Datos Personales, que informe el tratamiento por el proveedor de pagos y la transferencia internacional de datos.</li>
+            <li>Facturación electrónica ante el SRI con firma electrónica vigente, integrada por API o emitida desde el sistema contable.</li>
+            <li>Definir con el área tributaria el tratamiento de IVA de las entradas y de los patrocinios.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">07 · Cronograma</div>
+      <h2>Los tiempos de <em>despliegue.</em></h2>
+      <p class="lead">Contando desde el lunes 28 de septiembre de 2026, el plan permite abrir el registro pagado el lunes 16 de noviembre de 2026 y vender durante cuatro meses antes del evento, con holgura si algún paso se demora.</p>
+      <div class="gantt reveal">
+        <table>
+          <thead>
+            <tr><th>Fase</th><th class="wk">28 sep</th><th class="wk">5 oct</th><th class="wk">12 oct</th><th class="wk">19 oct</th><th class="wk">26 oct</th><th class="wk">2 nov</th><th class="wk">9 nov</th><th class="wk">16 nov</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="lbl">Documentos y solicitud a Payphone<small>1 a 2 semanas</small></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="lbl">Límites de retiro por escrito<small>Condición para confirmar Payphone</small></td><td></td><td class="bar"><div class="gb warn"></div></td><td class="bar"><div class="gb warn"></div></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="lbl">Afiliación Kushki en paralelo<small>4 a 8 semanas, contingencia</small></td><td class="bar"><div class="gb alt"></div></td><td class="bar"><div class="gb alt"></div></td><td class="bar"><div class="gb alt"></div></td><td class="bar"><div class="gb alt"></div></td><td class="bar"><div class="gb alt"></div></td><td class="bar"><div class="gb alt"></div></td><td class="bar"><div class="gb alt"></div></td><td class="bar"><div class="gb alt"></div></td></tr>
+            <tr><td class="lbl">Términos, privacidad y facturación<small>2 a 3 semanas</small></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="lbl">Desarrollo en sandbox<small>Órdenes, checkout, confirmación, QR, admin</small></td><td></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="lbl">Endurecimiento de seguridad<small>Cabeceras, secretos, admin con 2FA</small></td><td></td><td></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td></td><td></td><td></td></tr>
+            <tr><td class="lbl">Pruebas y auditoría<small>Tarjetas extranjeras, 3DS, reembolsos, ZAP</small></td><td></td><td></td><td></td><td></td><td class="bar"><div class="gb"></div></td><td class="bar"><div class="gb"></div></td><td></td><td></td></tr>
+            <tr><td class="lbl">Salida controlada<small>Credenciales de producción y venta a la lista</small></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bar"><div class="gb ok"></div></td><td></td></tr>
+            <tr><td class="lbl">Apertura pública del registro<small>Lunes 16 de noviembre de 2026</small></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bar"><div class="gb ok"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">La integración técnica de la cajita toma pocas horas según fuentes públicas, y el resto del desarrollo corresponde a órdenes, entradas, facturación, correos y seguridad. La salida controlada consiste en vender primero a las personas inscritas en la lista para detectar fallas con volumen bajo.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">08 · Decisiones pendientes</div>
+      <h2>Lo que conviene resolver <em>esta semana.</em></h2>
+      <div class="risk">
+        <div class="card reveal"><h3>Proyección de ventas</h3><p>Estimar cuántas entradas y a qué precio se venderán permite saber si los límites de Payphone alcanzan y cuánto ahorraría Kushki con su comisión negociada.</p></div>
+        <div class="card reveal"><h3>Carta de Payphone</h3><p>Pedir por escrito la ampliación de límites de retiro, la confirmación de 3D Secure para tarjetas extranjeras y el procedimiento de contracargos para la cuenta de la fundación.</p></div>
+        <div class="card reveal"><h3>Diseño intercambiable</h3><p>Programar la integración detrás de una interfaz de pasarela en Laravel, para cambiar a Kushki o sumar PayPal sin tocar órdenes, entradas ni facturación.</p></div>
+        <div class="card reveal"><h3>Responsable de conciliación</h3><p>Designar a quien concilie a diario las ventas del sitio con los reportes de la pasarela y los depósitos bancarios, y atienda reembolsos y disputas.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">09 · Fuentes</div>
+      <h2>De dónde salen los <em>datos.</em></h2>
+      <ol class="src-list">
+        <li><a href="https://payphone.app/para-negocios">Payphone, botón de pago y links de cobro para negocios</a>, sobre comisión, acreditación, PCI DSS 4.0 y tarjetas aceptadas.</li>
+        <li><a href="https://docs.payphone.app/cajita-de-pagos">Documentación de la Cajita de Pagos de Payphone</a>, sobre confirmación en cinco minutos, idioma, dominio y Referrer-Policy.</li>
+        <li><a href="https://help.payphone.app/hc/es/articles/31454374072475--Con-Payphone-puedo-cobrar-a-tarjetas-nacionales-e-internacionales">Centro de soporte de Payphone</a>, sobre tarjetas nacionales e internacionales.</li>
+        <li><a href="https://soporte.kushkipagos.com/hc/en-us/articles/15260937248403-Affiliation-process-in-Ecuador">Kushki, proceso de afiliación en Ecuador</a>, sobre modelos gateway y agregación y documentos requeridos.</li>
+        <li><a href="https://docs.kushki.com/ec/card-payments/3d-secure/3ds-overview/">Kushki Docs, introducción a 3DS</a>, sobre autenticación 3DS 1.0 y 2.0.</li>
+        <li><a href="https://www.nmtechstudio.com/blog/pasarelas-pago-ecuador-2026-comparativa">NM Tech Studio, comparativa de pasarelas 2026</a>, fuente de los límites de retiro de Payphone y de los plazos de liquidación, que deben confirmarse con cada proveedor.</li>
+        <li><a href="https://www.paypal.com/ec/cshelp/article/%C2%BFc%C3%B3mo-hago-para-retirar-fondos-de-mi-cuenta-de-paypal-help394">PayPal Ecuador, retiro de fondos</a>, sobre vinculación de cuentas bancarias locales.</li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span class="logo" aria-hidden="true"><svg role="img" aria-label="HEKA" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4500 4500"><g id="Layer 1"><path id="Path 0" fill-rule="evenodd" class="s0" d="m2195.18 154.15c-5.34 0.2-22.1 0.88-37.24 1.52-15.14 0.64-38.21 1.88-51.27 2.77-13.07 0.88-36.63 2.78-52.36 4.21-15.73 1.44-39.29 3.88-52.35 5.42-13.06 1.55-35.65 4.51-50.2 6.58-14.54 2.07-38.1 5.72-52.35 8.12-14.25 2.4-38.29 6.79-53.43 9.75-15.14 2.96-38.46 7.81-51.82 10.77-13.36 2.96-34.97 8-48.03 11.21-13.07 3.21-36.14 9.23-51.28 13.38-15.14 4.15-37.97 10.7-50.73 14.55-12.77 3.84-32.44 9.99-43.72 13.67-11.28 3.67-32.9 11.04-48.04 16.38-15.14 5.33-38.69 13.99-52.35 19.24-13.66 5.25-34.79 13.64-46.96 18.65-12.17 5.01-31.6 13.25-43.17 18.32-11.58 5.06-31.98 14.28-45.34 20.5-13.36 6.21-35.71 17.01-49.66 23.98-13.95 6.98-33.62 17.06-43.72 22.41-10.09 5.35-29.03 15.67-42.09 22.93-13.07 7.27-35.41 20.16-49.66 28.66-14.25 8.5-35.14 21.27-46.42 28.38-11.28 7.11-31.44 20.21-44.79 29.12-13.36 8.91-34.01 23.03-45.88 31.39-11.87 8.35-33.98 24.47-49.12 35.82-15.14 11.35-36.27 27.6-46.95 36.11-10.69 8.5-29.39 23.81-41.56 34.02-12.17 10.2-28.43 24.08-36.12 30.84-7.7 6.76-22.27 19.82-32.38 29.02-10.11 9.2-29.76 27.66-43.67 41.02-13.91 13.36-36.26 35.71-49.66 49.66-13.41 13.96-31.91 33.65-41.11 43.76-9.2 10.11-22.26 24.68-29.02 32.38-6.76 7.69-20.64 23.95-30.84 36.12-10.21 12.17-25.52 30.87-34.02 41.56-8.51 10.69-24.76 31.82-36.11 46.96-11.35 15.13-27.47 37.24-35.82 49.11-8.36 11.87-22.48 32.52-31.39 45.88-8.91 13.36-22.01 33.52-29.12 44.8-7.11 11.28-19.88 32.16-28.38 46.41-8.5 14.25-21.39 36.6-28.66 49.66-7.26 13.06-17.58 32-22.93 42.1-5.35 10.09-15.43 29.76-22.41 43.71-6.98 13.96-17.77 36.3-23.98 49.66-6.22 13.36-15.44 33.76-20.51 45.34-5.06 11.57-13.3 31-18.31 43.17-5.01 12.18-13.4 33.31-18.65 46.96-5.24 13.66-13.66 36.49-18.7 50.74-5.05 14.24-12.39 35.74-16.31 47.76-3.92 12.02-10.32 32.43-14.21 45.34-3.89 12.91-10.47 35.86-14.62 51-4.15 15.14-10.17 38.22-13.38 51.28-3.22 13.06-8.26 34.68-11.22 48.03-2.96 13.36-7.81 36.68-10.77 51.82-2.96 15.14-7.34 39.18-9.74 53.43-2.4 14.25-6.06 37.81-8.13 52.35-2.07 14.55-5.02 37.14-6.57 50.2-1.54 13.06-3.98 36.62-5.42 52.35-1.43 15.74-3.34 39.54-4.23 52.9-0.9 13.35-2.23 35.94-2.97 50.19-0.76 14.84-1.33 54.28-1.33 92.29 0 38.02 0.57 77.46 1.33 92.3 0.74 14.25 2.07 36.84 2.97 50.19 0.89 13.36 2.8 37.16 4.23 52.9 1.44 15.73 3.88 39.29 5.42 52.35 1.55 13.06 4.5 35.65 6.57 50.2 2.07 14.54 5.73 38.1 8.13 52.35 2.4 14.25 6.78 38.29 9.75 53.43 2.96 15.14 7.81 38.46 10.77 51.82 2.96 13.35 8 34.97 11.21 48.03 3.21 13.06 9.23 36.14 13.38 51.28 4.15 15.14 11 38.94 15.23 52.89 4.22 13.95 10.37 33.63 13.67 43.72 3.31 10.09 10.37 30.74 15.7 45.87 5.34 15.14 13.99 38.7 19.24 52.36 5.25 13.65 13.64 34.78 18.65 46.96 5.01 12.17 13.25 31.6 18.31 43.17 5.07 11.58 14.29 31.98 20.51 45.34 6.21 13.36 17 35.7 23.98 49.66 6.98 13.95 17.06 33.62 22.41 43.71 5.35 10.1 15.67 29.04 22.93 42.1 7.27 13.06 20.16 35.41 28.66 49.66 8.5 14.25 21.27 35.13 28.38 46.41 7.11 11.28 20.21 31.44 29.12 44.8 8.91 13.36 23.03 34 31.39 45.88 8.35 11.87 24.47 33.97 35.82 49.11 11.35 15.14 27.41 36.03 35.7 46.42 8.28 10.39 22.55 27.88 31.7 38.86 9.16 10.98 23.45 27.74 31.77 37.24 8.32 9.5 22.42 25.28 31.34 35.07 8.92 9.79 27.18 29.22 40.59 43.18 13.4 13.96 35.75 36.31 49.67 49.67 13.91 13.36 33.3 31.58 43.09 40.5 9.79 8.92 25.57 23.02 35.07 31.34 9.5 8.31 26.25 22.61 37.24 31.76 10.98 9.16 28.47 23.43 38.86 31.71 10.39 8.28 31.27 24.35 46.41 35.7 15.14 11.35 37.25 27.47 49.12 35.82 11.87 8.36 32.52 22.48 45.88 31.39 13.35 8.91 33.51 22.01 44.79 29.12 11.28 7.11 32.17 19.88 46.42 28.38 14.25 8.5 36.59 21.39 49.66 28.66 13.06 7.26 32.24 17.71 42.63 23.22 10.39 5.51 31.77 16.4 47.5 24.2 15.73 7.8 37.35 18.24 48.04 23.2 10.68 4.96 29.38 13.38 41.56 18.71 12.17 5.34 32.08 13.8 44.25 18.81 12.17 5.01 33.55 13.49 47.5 18.85 13.95 5.36 38.24 14.27 53.97 19.81 15.74 5.53 40.02 13.71 53.98 18.17 13.95 4.45 36.05 11.25 49.11 15.1 13.06 3.85 35.65 10.18 50.2 14.07 14.54 3.9 34.7 9.07 44.79 11.5 10.1 2.43 29.04 6.78 42.1 9.68 13.06 2.9 34.92 7.47 48.58 10.17 13.65 2.69 36.24 6.84 50.19 9.22 13.95 2.38 33.38 5.53 43.18 7.01 9.8 1.47 29.23 4.14 43.18 5.93 13.95 1.79 34.6 4.24 45.88 5.44 11.28 1.19 31.92 3.14 45.87 4.31 13.96 1.17 38 2.88 53.44 3.79 15.43 0.92 42.63 2.15 60.45 2.73 17.81 0.58 46.71 1.06 64.22 1.06 17.52 0 46.42-0.48 64.23-1.06 17.81-0.58 45.01-1.81 60.45-2.73 15.44-0.91 39.48-2.62 53.43-3.79 13.96-1.17 34.6-3.12 45.88-4.31 11.28-1.2 31.93-3.65 45.88-5.44 13.95-1.79 33.38-4.46 43.18-5.93 9.79-1.48 29.22-4.63 43.17-7.01 13.96-2.38 36.54-6.53 50.2-9.22 13.65-2.7 35.51-7.27 48.58-10.17 13.06-2.9 32-7.27 42.09-9.7 10.1-2.43 30.26-7.6 44.8-11.49 14.55-3.88 37.14-10.21 50.2-14.06 13.06-3.85 35.16-10.65 49.11-15.1 13.95-4.46 38.24-12.64 53.97-18.17 15.74-5.54 40.03-14.45 53.98-19.81 13.95-5.36 35.32-13.84 47.49-18.85 12.17-5.01 32.09-13.47 44.26-18.81 12.17-5.33 30.87-13.75 41.56-18.71 10.69-4.96 32.3-15.4 48.04-23.2 15.73-7.8 37.1-18.69 47.49-24.2 10.39-5.51 29.58-15.96 42.64-23.22 13.06-7.27 35.41-20.16 49.66-28.66 14.25-8.5 35.13-21.27 46.41-28.38 11.28-7.11 31.44-20.21 44.8-29.12 13.36-8.91 34-23.03 45.88-31.39 11.87-8.35 33.97-24.47 49.11-35.82 15.14-11.35 36.03-27.42 46.42-35.7 10.39-8.28 27.88-22.55 38.86-31.71 10.98-9.15 27.74-23.45 37.24-31.76 9.5-8.32 25.28-22.42 35.07-31.34 9.79-8.92 29.43-27.39 43.64-41.04 14.21-13.66 36.78-36.24 50.14-50.2 13.36-13.95 31.38-33.14 40.04-42.63 8.66-9.5 22.55-25.05 30.87-34.55 8.31-9.5 22.61-26.26 31.76-37.24 9.16-10.98 23.43-28.47 31.71-38.86 8.28-10.39 24.35-31.28 35.69-46.42 11.35-15.14 27.48-37.24 35.83-49.11 8.36-11.88 22.48-32.52 31.39-45.88 8.9-13.36 22.01-33.52 29.12-44.8 7.11-11.28 19.88-32.16 28.38-46.41 8.49-14.25 21.39-36.6 28.66-49.66 7.27-13.06 18.22-33.22 24.35-44.79 6.13-11.58 18.52-36.11 27.54-54.52 9.02-18.4 21.01-43.66 26.65-56.13 5.64-12.47 14.49-32.63 19.68-44.8 5.18-12.17 14.42-34.76 20.53-50.19 6.1-15.44 15.09-39 19.97-52.36 4.87-13.35 13.4-37.88 18.94-54.51 5.55-16.62 13.53-41.64 17.75-55.59 4.22-13.95 11.06-37.75 15.21-52.89 4.16-15.14 10.18-38.22 13.39-51.28 3.21-13.06 8.25-34.68 11.21-48.03 2.95-13.36 7.57-35.46 10.27-49.12 2.69-13.65 6.84-36.24 9.22-50.19 2.38-13.96 5.53-33.39 7-43.18 1.48-9.8 4.15-29.23 5.94-43.18 1.79-13.95 4.24-34.6 5.44-45.88 1.19-11.28 3.13-31.92 4.31-45.87 1.17-13.96 2.88-38 3.79-53.44 0.92-15.43 2.14-42.64 2.73-60.45 0.58-17.81 1.06-46.71 1.06-64.23 0-17.51-0.48-46.41-1.06-64.22-0.59-17.81-1.81-45.02-2.73-60.45-0.91-15.44-2.62-39.48-3.79-53.44-1.18-13.95-3.12-34.59-4.31-45.87-1.2-11.28-3.65-31.93-5.44-45.88-1.79-13.95-4.46-33.38-5.94-43.18-1.47-9.79-4.62-29.22-7-43.18-2.38-13.95-6.53-36.54-9.22-50.19-2.7-13.66-7.27-35.52-10.17-48.58-2.9-13.06-7.27-32-9.7-42.1-2.43-10.09-7.6-30.25-11.49-44.79-3.89-14.55-10.21-37.14-14.06-50.2-3.85-13.06-10.65-35.16-15.11-49.11-4.45-13.96-12.63-38.24-18.16-53.98-5.54-15.73-14.45-40.02-19.81-53.97-5.36-13.95-13.84-35.32-18.85-47.5-5.01-12.17-13.47-32.08-18.81-44.25-5.33-12.17-13.75-30.88-18.71-41.56-4.96-10.69-15.4-32.3-23.2-48.04-7.8-15.73-18.69-37.1-24.2-47.49-5.51-10.39-15.96-29.58-23.23-42.64-7.26-13.06-20.16-35.41-28.65-49.66-8.5-14.25-21.27-35.13-28.38-46.41-7.11-11.28-20.22-31.44-29.12-44.8-8.91-13.36-23.03-34.01-31.39-45.88-8.35-11.87-24.48-33.98-35.83-49.11-11.34-15.14-27.41-36.03-35.69-46.42-8.28-10.39-22.55-27.88-31.71-38.86-9.15-10.99-23.45-27.74-31.76-37.24-8.32-9.5-22.42-25.28-31.34-35.07-8.92-9.79-27.18-29.22-40.59-43.18-13.4-13.96-35.76-36.31-49.67-49.67-13.92-13.36-33.31-31.58-43.09-40.5-9.79-8.92-25.57-23.02-35.07-31.34-9.5-8.31-26.26-22.61-37.24-31.76-10.98-9.16-28.47-23.43-38.86-31.71-10.39-8.28-31.28-24.35-46.42-35.7-15.14-11.35-37.24-27.47-49.11-35.82-11.88-8.36-32.52-22.48-45.88-31.39-13.36-8.91-33.52-22.01-44.8-29.12-11.28-7.11-32.16-19.88-46.41-28.38-14.25-8.5-36.6-21.39-49.66-28.66-13.06-7.26-32-17.58-42.1-22.93-10.09-5.35-29.76-15.43-43.72-22.41-13.95-6.97-36.29-17.77-49.65-23.98-13.36-6.22-33.76-15.44-45.34-20.5-11.58-5.07-31.01-13.31-43.18-18.32-12.17-5.01-33.3-13.4-46.95-18.65-13.66-5.25-37.22-13.9-52.36-19.24-15.14-5.33-35.78-12.39-45.87-15.69-10.1-3.3-29.77-9.46-43.72-13.68-13.95-4.22-37.76-11.08-52.89-15.23-15.14-4.15-38.22-10.17-51.28-13.38-13.06-3.21-34.68-8.25-48.03-11.21-13.36-2.96-36.68-7.81-51.82-10.77-15.14-2.96-39.18-7.35-53.43-9.75-14.25-2.4-37.81-6.05-52.36-8.12-14.54-2.07-37.13-5.03-50.19-6.58-13.06-1.54-36.38-3.96-51.81-5.38-15.44-1.41-39.49-3.33-53.44-4.25-13.95-0.93-35.32-2.2-47.49-2.82-12.17-0.62-48.61-1.28-80.96-1.48-32.36-0.19-63.21-0.19-68.55 0.01zm12.41 122.57c21.67-0.38 50.58-0.58 64.23-0.43 13.66 0.15 38.67 0.77 55.59 1.4 16.93 0.62 41.21 1.84 53.98 2.7 12.76 0.87 34.38 2.56 48.03 3.77 13.66 1.21 35.03 3.38 47.5 4.83 12.47 1.44 31.9 3.86 43.18 5.38 11.28 1.51 35.32 5.19 53.43 8.17 18.11 2.98 47.25 8.29 64.77 11.79 17.51 3.5 42.53 8.84 55.59 11.85 13.06 3.02 34.92 8.37 48.58 11.89 13.65 3.51 35.27 9.36 48.03 12.99 12.77 3.62 32.44 9.46 43.72 12.96 11.28 3.5 34.11 10.95 50.73 16.56 16.63 5.6 43.1 15.04 58.84 20.96 15.73 5.92 37.59 14.43 48.57 18.9 10.98 4.48 29.2 12.12 40.48 16.99 11.28 4.88 29.25 12.89 39.94 17.81 10.69 4.92 29.87 14 42.64 20.18 12.76 6.19 33.65 16.74 46.42 23.46 12.76 6.72 34.13 18.29 47.49 25.71 13.36 7.42 37.41 21.35 53.44 30.97 16.03 9.61 40.31 24.66 53.97 33.44 13.65 8.78 34.06 22.31 45.34 30.06 11.28 7.76 27.31 18.97 35.62 24.92 8.31 5.95 25.55 18.67 38.32 28.27 12.76 9.61 31.71 24.22 42.1 32.49 10.39 8.26 26.66 21.52 36.16 29.47 9.5 7.95 24.8 21.04 34 29.09 9.2 8.06 25.48 22.63 36.16 32.39 10.69 9.76 37.94 36.24 60.55 58.85 22.61 22.6 49.09 49.84 58.85 60.52 9.75 10.69 24.31 26.96 32.37 36.17 8.05 9.2 21.14 24.5 29.09 34 7.94 9.5 21.22 25.77 29.49 36.16 8.28 10.39 24.86 32.01 36.85 48.04 11.99 16.03 27.77 37.64 35.07 48.03 7.29 10.39 20.65 30.07 29.68 43.72 9.03 13.66 22.63 34.79 30.22 46.96 7.6 12.17 19.5 31.84 26.45 43.72 6.95 11.87 17.5 30.33 23.45 41.02 5.95 10.68 16.32 29.87 23.04 42.63 6.72 12.77 17.78 34.63 24.57 48.58 6.78 13.95 17.08 35.81 22.87 48.58 5.8 12.76 14.78 33.16 19.96 45.33 5.19 12.17 13.94 33.55 19.45 47.5 5.51 13.95 13.91 36.05 18.67 49.11 4.75 13.07 12.3 34.68 16.77 48.04 4.47 13.36 11.76 36.19 16.19 50.73 4.43 14.55 10.75 36.17 14.03 48.04 3.29 11.87 8.65 32.28 11.91 45.34 3.27 13.06 7.89 32.25 10.28 42.64 2.39 10.39 6.75 30.79 9.7 45.33 2.95 14.55 7.09 36.17 9.2 48.04 2.11 11.87 5.29 31.06 7.07 42.64 1.78 11.57 4.44 30.03 5.91 41.02 1.48 10.98 3.67 28.71 4.88 39.4 1.21 10.68 3.17 30.11 4.35 43.18 1.18 13.06 2.87 34.67 3.75 48.03 0.88 13.36 2.17 36.19 2.85 50.74 0.69 14.54 1.25 51.46 1.25 82.03 0 30.58-0.56 67.5-1.25 82.04-0.68 14.55-1.97 37.38-2.85 50.74-0.88 13.36-2.33 32.54-3.22 42.64-0.89 10.09-2.85 29.52-4.35 43.18-1.51 13.65-3.94 33.81-5.41 44.79-1.48 10.99-4.13 29.44-5.91 41.02-1.78 11.58-4.96 30.77-7.07 42.64-2.11 11.87-6.25 33.49-9.2 48.04-2.96 14.54-7.08 33.97-9.16 43.17-2.08 9.21-7.21 30.34-11.39 46.96-4.18 16.63-11.15 42.61-15.49 57.75-4.34 15.14-11.8 39.92-16.58 55.05-4.77 15.14-12.52 38.46-17.21 51.82-4.7 13.36-11.81 33.03-15.81 43.72-4 10.68-11.18 29.14-15.95 41.02-4.78 11.87-12.3 30.09-16.72 40.48-4.43 10.39-12.67 29.09-18.32 41.56-5.66 12.46-18.21 38.69-27.9 58.29-9.69 19.59-23.53 46.55-30.76 59.91-7.23 13.35-19.71 35.7-27.75 49.65-8.03 13.95-21.66 36.78-30.29 50.74-8.62 13.95-23.54 37.26-33.16 51.81-9.61 14.55-23.44 34.95-30.73 45.34-7.3 10.39-23.07 32-35.06 48.03-11.98 16.03-30.56 40.08-41.28 53.44-10.72 13.35-25.66 31.57-33.21 40.48-7.54 8.9-22.58 26.15-33.41 38.32-10.84 12.17-28.21 31.11-38.61 42.09-10.41 10.99-33.68 34.55-51.72 52.36-18.04 17.81-40.82 39.68-50.62 48.6-9.79 8.92-25.58 23.02-35.08 31.33-9.5 8.32-25.77 22.19-36.16 30.83-10.39 8.64-26.42 21.68-35.62 28.98-9.2 7.3-27.18 21.15-39.94 30.77-12.77 9.61-31.95 23.73-42.64 31.37-10.69 7.63-31.82 22.18-46.96 32.33-15.14 10.14-39.67 26-54.51 35.24-14.84 9.24-35.73 21.9-46.42 28.13-10.68 6.24-28.17 16.21-38.86 22.16-10.68 5.95-29.87 16.32-42.64 23.04-12.76 6.72-34.62 17.77-48.57 24.56-13.95 6.78-35.81 17.07-48.58 22.87-12.76 5.8-33.16 14.79-45.33 19.98-12.17 5.18-33.79 14.02-48.04 19.65-14.25 5.62-37.08 14.26-50.73 19.19-13.66 4.94-36.73 12.94-51.28 17.77-14.54 4.84-37.62 12.15-51.27 16.25-13.66 4.1-34.55 10.12-46.42 13.38-11.87 3.25-32.28 8.59-45.34 11.86-13.06 3.26-35.89 8.61-50.73 11.88-14.84 3.27-36.95 7.88-49.12 10.25-12.17 2.36-35.24 6.5-51.27 9.18-16.03 2.69-41.53 6.58-56.67 8.66-15.14 2.08-38.7 5.01-52.36 6.51-13.65 1.49-36.24 3.69-50.19 4.87-13.95 1.19-38.48 2.91-54.51 3.84-16.03 0.93-48.09 2.11-71.25 2.62-23.59 0.52-60.84 0.52-84.74 0-23.45-0.51-51.62-1.44-62.6-2.07-10.99-0.62-27.02-1.62-35.63-2.21-8.6-0.6-26.58-2.07-39.94-3.27-13.35-1.2-34.73-3.38-47.49-4.85-12.77-1.46-33.9-4.14-46.96-5.95-13.06-1.8-36.86-5.47-52.89-8.14-16.03-2.67-42.26-7.46-58.29-10.64-16.03-3.19-40.08-8.29-53.44-11.34-13.35-3.06-32.06-7.5-41.55-9.88-9.5-2.38-27.96-7.25-41.02-10.82-13.07-3.57-36.38-10.31-51.82-14.98-15.43-4.67-41.91-13.17-58.83-18.88-16.92-5.72-42.91-14.94-57.75-20.48-14.84-5.55-36.22-13.82-47.5-18.38-11.28-4.55-30.46-12.57-42.63-17.8-12.18-5.24-31.85-13.98-43.72-19.43-11.88-5.45-35.68-16.89-52.9-25.43-17.21-8.54-41.99-21.29-55.05-28.33-13.06-7.03-33.95-18.64-46.42-25.79-12.46-7.15-29.46-17.11-37.78-22.12-8.31-5.02-23.85-14.62-34.54-21.35-10.69-6.73-30.12-19.37-43.18-28.09-13.06-8.72-32.25-21.84-42.64-29.15-10.39-7.31-30.06-21.64-43.71-31.85-13.66-10.21-34.79-26.49-46.96-36.19-12.17-9.69-29.42-23.73-38.32-31.18-8.91-7.46-23.97-20.36-33.46-28.66-9.5-8.31-26.02-23.09-36.71-32.85-10.68-9.76-37.91-36.25-60.49-58.86-22.59-22.61-48.79-49.6-58.22-59.99-9.44-10.39-23.75-26.42-31.81-35.63-8.06-9.2-20.76-24.01-28.22-32.92-7.45-8.91-21.48-26.15-31.17-38.32-9.69-12.17-25.97-33.3-36.18-46.96-10.21-13.65-24.89-33.81-32.63-44.8-7.73-10.98-23.05-33.57-34.03-50.19-10.98-16.62-26.52-40.91-34.54-53.97-8.02-13.06-21.13-35.17-29.13-49.12-8-13.95-19.81-35.08-26.24-46.95-6.43-11.88-19.09-36.41-28.15-54.52-9.05-18.11-20.92-42.64-26.37-54.51-5.45-11.87-14.52-32.28-20.15-45.34-5.64-13.06-14.52-34.43-19.74-47.49-5.23-13.06-13.39-34.2-18.14-46.96-4.75-12.76-12.85-35.59-17.99-50.73-5.15-15.14-13.24-40.16-17.99-55.6-4.75-15.43-12.3-41.42-16.77-57.75-4.47-16.32-11.22-42.55-14.99-58.29-3.77-15.73-9.27-40.02-12.23-53.97-2.95-13.95-7.34-36.05-9.74-49.12-2.41-13.06-5.81-32.73-7.58-43.71-1.76-10.99-4.67-30.42-6.46-43.18-1.79-12.77-4.47-33.9-5.96-46.96-1.49-13.06-3.69-34.68-4.89-48.04-1.19-13.35-2.91-35.46-3.8-49.11-0.9-13.66-2.12-36.49-2.72-50.73-0.59-14.25-1.08-49.96-1.08-79.35 0-29.38 0.48-64.84 1.06-78.8 0.59-13.95 1.57-33.38 2.19-43.17 0.62-9.8 2.09-29.72 3.27-44.26 1.18-14.55 3.61-39.56 5.4-55.59 1.79-16.03 4.72-39.59 6.52-52.36 1.8-12.76 4.71-32.19 6.47-43.18 1.77-10.98 5.17-30.65 7.58-43.71 2.4-13.07 6.79-35.17 9.75-49.12 2.96-13.95 7.98-36.3 11.16-49.65 3.17-13.36 8.75-35.46 12.4-49.12 3.64-13.65 8.83-32.36 11.51-41.56 2.69-9.2 7.74-25.96 11.24-37.24 3.49-11.28 9.96-31.2 14.38-44.26 4.41-13.06 11.93-34.43 16.7-47.49 4.78-13.07 13.03-34.68 18.34-48.04 5.31-13.36 14.75-36.19 20.99-50.73 6.23-14.55 16.04-36.65 21.8-49.12 5.76-12.47 17.64-37 26.4-54.51 8.76-17.52 21.18-41.56 27.61-53.44 6.42-11.87 18.22-33 26.22-46.95 8-13.95 21.11-36.06 29.14-49.12 8.03-13.06 23.41-37.1 34.18-53.43 10.77-16.33 24.88-37.21 31.35-46.42 6.47-9.2 18.54-25.96 26.82-37.24 8.28-11.28 22.24-29.74 31.01-41.02 8.78-11.28 23.12-29.25 31.87-39.94 8.75-10.68 21.54-25.98 28.42-33.98 6.88-8.01 19.02-21.85 26.97-30.77 7.95-8.91 23.81-26.17 35.25-38.34 11.45-12.17 33.84-35.02 49.78-50.78 15.93-15.77 35.77-34.97 44.08-42.67 8.31-7.71 23.85-21.77 34.54-31.26 10.69-9.48 26.96-23.6 36.16-31.38 9.2-7.77 27.91-23.08 41.56-34.01 13.66-10.94 35.27-27.7 48.04-37.25 12.76-9.55 31.22-23.08 41.02-30.05 9.79-6.98 29.95-20.82 44.79-30.77 14.85-9.94 36.22-23.88 47.5-30.98 11.28-7.11 28.28-17.55 37.78-23.21 9.5-5.66 24.07-14.19 32.39-18.96 8.31-4.77 22.39-12.68 31.3-17.57 8.91-4.9 27.61-14.86 41.56-22.14 13.95-7.28 37.27-18.93 51.81-25.9 14.55-6.97 36.16-17.02 48.04-22.34 11.87-5.32 29.12-12.84 38.32-16.73 9.2-3.88 29.36-12.06 44.8-18.17 15.43-6.12 39.48-15.24 53.43-20.26 13.95-5.03 38-13.29 53.43-18.36 15.44-5.07 38.03-12.2 50.2-15.84 12.17-3.64 34.27-9.93 49.11-13.98 14.85-4.05 39.38-10.31 54.52-13.92 15.14-3.61 37.72-8.75 50.19-11.41 12.47-2.66 34.33-7.02 48.58-9.68 14.25-2.67 38.29-6.8 53.43-9.2 15.14-2.39 40.88-6.06 57.21-8.15 16.33-2.08 39.16-4.75 50.74-5.93 11.57-1.18 33.67-3.12 49.11-4.31 15.44-1.19 38.02-2.72 50.2-3.4 12.17-0.67 39.85-1.54 61.52-1.92zm-924.01 1256.87v598.56h177.03v-371.33h458.77v371.33h175.95v-1197.12h-175.95v669.27h-458.77v-669.27h-177.03zm1101.05-3.23v592.08l703.26-0.54 0.54-170.02h-526.77v-282.81h466.32v-163h-466.32v-398.32h512.74v-169.48h-689.77zm342.59 732.64c-3.04 7.3-111.71 274.61-241.5 594.02-129.79 319.41-235.99 581.11-236 581.56-0.01 0.44 41.14 0.8 91.46 0.8l91.48-0.02c16.78-51.34 21.95-65.05 26.33-73.92 3.88-7.83 7.96-14.44 10.34-16.73l3.94-3.78c467.14 0.73 525.62 1.12 527.73 2.15 1.48 0.73 4.3 3.22 6.27 5.53 1.97 2.31 5.73 8.57 8.36 13.91 2.63 5.35 7.2 17.25 10.16 26.45 2.96 9.2 7.12 22.8 9.24 30.22 2.12 7.42 4.2 14.1 4.61 14.83 0.59 1.04 20.59 1.28 92.18 1.08l91.41-0.25c-378.99-920.24-489.35-1187.79-489.75-1188.27-0.4-0.47-3.22 5.12-6.26 12.42zm-96.38 658.5c56.05-145.02 102.23-263.3 102.62-262.85 0.39 0.46 47.93 119.35 105.65 264.21 57.72 144.87 105.13 264 105.35 264.74 0.32 1.08-41.77 1.35-207.93 1.35-197.83 0-208.32-0.09-207.97-1.89 0.2-1.04 46.23-120.54 102.28-265.56zm-1340.52-73.39l0.28 595.05 176.49 0.54-0.03-396.7c5.27-8.36 9.01-13.71 11.72-17.27 2.7-3.56 19.8-24.69 37.99-46.96 18.2-22.26 38.77-47.76 45.72-56.67 6.96-8.9 16.63-21.88 21.5-28.84 4.87-6.97 11.04-16.85 13.71-21.96 4.84-9.26 4.89-9.32 11.07-11.37l6.2-2.05c24.4 48.1 90.59 178.89 162.82 321.67l131.33 259.61c139.3 0.42 179.72 0.18 179.71-0.27-0.01-0.44-81.81-165.23-181.78-366.2-99.98-200.97-181.94-365.9-182.14-366.52-0.21-0.62 72.94-102.14 162.55-225.61 89.61-123.46 164.17-226.08 165.7-228.04l2.77-3.56-201.32 0.1-386.98 525.29-0.54-525.29h-177.04z"/></g></svg></span>
+    <p>HEKA · Informe técnico elaborado por Soporte HEKA para el proyecto EQUINOX 2027 · Quito, 27 de septiembre de 2026.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement,btn=document.getElementById('themeBtn');
+  function isDark(){var t=root.getAttribute('data-theme');return t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;}
+  function label(){btn.textContent=isDark()?'Modo claro':'Modo oscuro';}
+  try{var s=localStorage.getItem('heka-theme');if(s)root.setAttribute('data-theme',s);}catch(e){}
+  label();
+  btn.addEventListener('click',function(){var n=isDark()?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('heka-theme',n);}catch(e){}label();});
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
+  var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:.08});
+  els.forEach(function(e){io.observe(e);});
+})();
+</script>
+</body>
+</html>
