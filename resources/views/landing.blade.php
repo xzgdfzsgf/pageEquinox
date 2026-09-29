@@ -375,12 +375,16 @@
                     <p class="exp__meta"><span><x-icon name="pin" /> Quito, Ecuador</span> <span><x-icon name="calendar" /> March 16–18</span></p>
                 </div>
                 <div class="venue-photos">
-                    <div class="venue-photos__hero">
+                    <div class="venue-frame venue-frame--hero">
                         <img class="venue-photo" src="{{ asset('img/venue-udla-1.jpg') }}" alt="UDLA Park campus in Quito, aerial view" loading="lazy">
                         <span class="venue-photos__num" aria-hidden="true">01</span>
                     </div>
-                    <img class="venue-photo" src="{{ asset('img/venue-udla-2.jpg') }}" alt="Auditorium at UDLA Park during a conference" loading="lazy">
-                    <img class="venue-photo" src="{{ asset('img/venue-udla-3.jpg') }}" alt="UDLA Park glass architecture" loading="lazy">
+                    <div class="venue-frame">
+                        <img class="venue-photo" src="{{ asset('img/venue-udla-2.jpg') }}" alt="Auditorium at UDLA Park during a conference" loading="lazy">
+                    </div>
+                    <div class="venue-frame">
+                        <img class="venue-photo" src="{{ asset('img/venue-udla-3.jpg') }}" alt="UDLA Park glass architecture" loading="lazy">
+                    </div>
                 </div>
             </div>
 
@@ -393,12 +397,16 @@
                     <p class="exp__meta"><span><x-icon name="pin" /> Urcuquí, Ecuador</span> <span><x-icon name="calendar" /> March 19</span></p>
                 </div>
                 <div class="venue-photos">
-                    <div class="venue-photos__hero">
+                    <div class="venue-frame venue-frame--hero">
                         <img class="venue-photo" src="{{ asset('img/venue-stargate-1.jpg') }}" alt="Astralintu team on site at the Stargate construction" loading="lazy">
                         <span class="venue-photos__num" aria-hidden="true">02</span>
                     </div>
-                    <img class="venue-photo" src="{{ asset('img/venue-stargate-2.jpg') }}" alt="Stargate teleport structure under construction" loading="lazy">
-                    <img class="venue-photo" src="{{ asset('img/venue-stargate-3.jpg') }}" alt="Stargate site foundation, aerial view" loading="lazy">
+                    <div class="venue-frame">
+                        <img class="venue-photo" src="{{ asset('img/venue-stargate-2.jpg') }}" alt="Stargate teleport structure under construction" loading="lazy">
+                    </div>
+                    <div class="venue-frame">
+                        <img class="venue-photo" src="{{ asset('img/venue-stargate-3.jpg') }}" alt="Stargate site foundation, aerial view" loading="lazy">
+                    </div>
                 </div>
             </div>
 
