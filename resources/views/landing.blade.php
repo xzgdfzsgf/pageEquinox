@@ -382,10 +382,12 @@
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-udla-2.jpg') }}" alt="Auditorium at UDLA Park during a conference" loading="lazy">
+                        <span class="venue-frame__caption">Auditorium</span>
                         <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-udla-3.jpg') }}" alt="UDLA Park glass architecture" loading="lazy">
+                        <span class="venue-frame__caption">Campus</span>
                         <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                 </div>
@@ -407,10 +409,12 @@
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-stargate-2.jpg') }}" alt="Stargate teleport structure under construction" loading="lazy">
+                        <span class="venue-frame__caption">Under construction</span>
                         <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                     <div class="venue-frame">
                         <img class="venue-photo" src="{{ asset('img/venue-stargate-3.jpg') }}" alt="Stargate site foundation, aerial view" loading="lazy">
+                        <span class="venue-frame__caption">Site · aerial view</span>
                         <span class="venue-frame__shine" aria-hidden="true"></span>
                     </div>
                 </div>
