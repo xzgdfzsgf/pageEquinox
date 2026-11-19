@@ -2,7 +2,7 @@
      Every color comes from the active style's tokens (see .modal--map in depth.css). --}}
 <svg class="map" viewBox="0 0 1000 640" role="img" aria-labelledby="map-title map-desc">
     <title id="map-title">Map of Ecuador with the EQUINOX venues</title>
-    <desc id="map-desc">The Conference takes place at UDLA Park in Quito, just south of the equator. The Stargate Inauguration is in Urcuquí, about 75 km north-east of Quito. The equator line crosses the country just north of Quito and also crosses the Galápagos Islands.</desc>
+    <desc id="map-desc">The Conference takes place at UDLA Park in Quito, just south of the equator. The Stargate Visit is in Urcuquí, about 75 km north-east of Quito. The equator line crosses the country just north of Quito and also crosses the Galápagos Islands.</desc>
     <defs>
         <linearGradient id="map-land" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" style="stop-color: var(--map-land-0)"/>

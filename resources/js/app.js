@@ -20,7 +20,7 @@ const themeColors = { black: '#08080A', violet: '#140A2C' };
 const themeName = document.querySelector('[data-theme-name]');
 
 function applyTheme(theme) {
-    if (!(theme in themeColors)) theme = 'black';
+    if (!(theme in themeColors)) theme = 'violet';
     root.dataset.theme = theme;
     themeButtons.forEach((b) => {
         const active = b.dataset.themeSet === theme;
@@ -32,12 +32,12 @@ function applyTheme(theme) {
         localStorage.setItem('equinox-theme', theme);
     } catch {}
 }
-applyTheme(root.dataset.theme || 'black');
+applyTheme(root.dataset.theme || 'violet');
 
 themeButtons.forEach((button) => {
     button.addEventListener('click', () => {
         const theme = button.dataset.themeSet;
-        if ((root.dataset.theme || 'black') === theme) return;
+        if ((root.dataset.theme || 'violet') === theme) return;
         if (!document.startViewTransition || reduceMotion) {
             applyTheme(theme);
             return;
@@ -159,7 +159,13 @@ if (orbitBox) {
 
 /* ---------- Active nav link ---------- */
 const navLinks = [...document.querySelectorAll('.site-nav ul a')];
-const sections = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+// Only in-page anchors (#section) are spied on; links to other pages are left alone.
+const sections = navLinks
+    .map((a) => {
+        const href = a.getAttribute('href');
+        return href && href.startsWith('#') ? document.querySelector(href) : null;
+    })
+    .filter(Boolean);
 if (sections.length) {
     const spy = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
@@ -484,4 +490,63 @@ function showSuccess(form, message) {
     box.innerHTML = '<span class="icon-ring icon-ring--lg"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p></p>';
     box.querySelector('p').textContent = message || 'Thank you!';
     form.replaceWith(box);
+}
+
+/* ---------------------------------------------------------------------------
+   Live flight search (Plan your visit)
+   Builds a Google Flights query to Quito (UIO) and opens live results so the
+   fares are always current, with no API key or external script required.
+   --------------------------------------------------------------------------- */
+const flightForm = document.querySelector('[data-flight-search]');
+if (flightForm) {
+    flightForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const origin = (flightForm.elements.origin?.value || '').trim();
+        if (!origin) { flightForm.elements.origin?.focus(); return; }
+        const depart = flightForm.elements.depart?.value || '';
+        const ret = flightForm.elements.return?.value || '';
+        let q = `Flights to Quito (UIO) from ${origin}`;
+        if (depart) q += ` on ${depart}`;
+        if (ret) q += ` returning ${ret}`;
+        window.open(`https://www.google.com/travel/flights?q=${encodeURIComponent(q)}`, '_blank', 'noopener');
+    });
+}
+
+/* ---------------------------------------------------------------------------
+   Hero slideshow (Plan your visit) — gentle crossfade between Quito images.
+   --------------------------------------------------------------------------- */
+const heroSlideshow = document.querySelector('[data-hero-slides]');
+if (heroSlideshow) {
+    const slides = [...heroSlideshow.querySelectorAll('.plan-hero__slide')];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (slides.length > 1 && !reduce) {
+        let idx = 0;
+        setInterval(() => {
+            slides[idx].classList.remove('is-active');
+            idx = (idx + 1) % slides.length;
+            slides[idx].classList.add('is-active');
+        }, 5500);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Quito skyline loader (Plan your visit) — fills with the flag colours, then
+   fades out. Always plays the full animation before revealing the page.
+   --------------------------------------------------------------------------- */
+const quitoLoader = document.querySelector('[data-quito-loader]');
+if (quitoLoader) {
+    let hidden = false;
+    const hide = () => {
+        if (hidden) return;
+        hidden = true;
+        quitoLoader.classList.add('is-done');
+        quitoLoader.addEventListener('transitionend', () => quitoLoader.remove(), { once: true });
+    };
+    // Let the fill animation finish (~2.3s) AND wait for the page to be ready.
+    let loaded = document.readyState === 'complete';
+    let elapsed = false;
+    const maybe = () => { if (loaded && elapsed) hide(); };
+    window.addEventListener('load', () => { loaded = true; maybe(); });
+    setTimeout(() => { elapsed = true; maybe(); }, 2300);
+    setTimeout(hide, 6000); // absolute fail-safe
 }

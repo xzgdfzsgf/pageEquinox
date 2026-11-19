@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasEmailHash;
 use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
 {
+    use HasEmailHash;
+
     /** Audience profiles offered in the "I am..." select. */
     public const PROFILES = [
         'industry' => 'Space industry / company',
@@ -20,6 +23,7 @@ class Lead extends Model
     protected $fillable = [
         'name',
         'email',
+        'email_hash',
         'organization',
         'country',
         'profile',
@@ -31,5 +35,8 @@ class Lead extends Model
 
     protected $casts = [
         'consent' => 'boolean',
+        'name' => 'encrypted',
+        'email' => 'encrypted',
+        'organization' => 'encrypted',
     ];
 }

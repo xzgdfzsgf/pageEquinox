@@ -17,7 +17,52 @@ class LandingController extends Controller
 {
     public function index(): View
     {
+        $title = 'EQUINOX 2027 — Where Space Meets at the Equator';
+        $description = 'EQUINOX: The Equatorial Space Economy. A global gathering on investment, business and new opportunities in space. March 16–19, 2027 · Quito, Ecuador.';
+
+        // Built here (plain PHP) rather than inline in the Blade view: a literal "@context"
+        // string in a .blade.php file gets mistaken for Laravel's @context directive by the
+        // Blade compiler, which mangles the output instead of emitting valid JSON-LD.
+        $jsonLd = json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Event',
+            'name' => 'EQUINOX 2027 — The Equatorial Space Economy',
+            'description' => $description,
+            'startDate' => '2027-03-16',
+            'endDate' => '2027-03-19',
+            'eventStatus' => 'https://schema.org/EventScheduled',
+            'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+            'location' => [
+                ['@type' => 'Place', 'name' => 'UDLA Park', 'address' => ['@type' => 'PostalAddress', 'addressLocality' => 'Quito', 'addressCountry' => 'EC']],
+                ['@type' => 'Place', 'name' => 'Astralintu Stargate', 'address' => ['@type' => 'PostalAddress', 'addressLocality' => 'Urcuquí', 'addressCountry' => 'EC']],
+            ],
+            'organizer' => ['@type' => 'Organization', 'name' => 'Fundación Sideralis'],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
         return view('landing', [
+            'title' => $title,
+            'description' => $description,
+            'jsonLd' => $jsonLd,
+            'profiles' => Lead::PROFILES,
+            'interests' => SponsorInquiry::INTERESTS,
+        ]);
+    }
+
+    public function theEvent(): View
+    {
+        return view('the-event', [
+            'title' => 'The Event — EQUINOX 2027 · Quito, Ecuador',
+            'description' => 'The Event: one gathering, two experiences. The Conference at UDLA Park and the Stargate Visit in Urcuquí. March 16–19, 2027 · Quito, Ecuador.',
+            'profiles' => Lead::PROFILES,
+            'interests' => SponsorInquiry::INTERESTS,
+        ]);
+    }
+
+    public function planYourVisit(): View
+    {
+        return view('plan-your-visit', [
+            'title' => 'Plan your visit — EQUINOX 2027 · Quito, Ecuador',
+            'description' => 'Plan your trip to EQUINOX 2027: flights, visa and entry requirements, partner hotels, airport transfers and conference shuttles. March 16–19, 2027 · Quito, Ecuador.',
             'profiles' => Lead::PROFILES,
             'interests' => SponsorInquiry::INTERESTS,
         ]);
@@ -43,15 +88,18 @@ class LandingController extends Controller
         ]);
 
         $email = Str::lower(trim($data['email']));
+        $emailHash = Lead::hashEmail($email);
 
         // Re-submitting updates the existing entry instead of failing on the unique email.
-        $lead = Lead::firstOrNew(['email' => $email]);
+        $lead = Lead::firstOrNew(['email_hash' => $emailHash]);
         $lead->fill(array_filter([
             'name' => $data['name'] ?? null,
             'organization' => $data['organization'] ?? null,
             'country' => $data['country'] ?? null,
             'profile' => $data['profile'] ?? null,
         ]) + [
+            'email' => $email,
+            'email_hash' => $emailHash,
             'consent' => true,
             'source' => $lead->source ?? ($data['source'] ?? 'landing'),
             'ip_address' => $request->ip(),
@@ -59,7 +107,40 @@ class LandingController extends Controller
         ]);
         $lead->save();
 
+        $this->notifyNewLead($lead);
+
         return $this->done($request, 'join', "You're on the list. We'll let you know as soon as registration opens.");
+    }
+
+    private function notifyNewLead(Lead $lead): void
+    {
+        $recipients = config('equinox.notify_emails');
+        if (empty($recipients)) {
+            return;
+        }
+
+        $profile = Lead::PROFILES[$lead->profile] ?? '—';
+        $body = implode("\n", [
+            'New registration on the EQUINOX list:',
+            '',
+            'Name: '.($lead->name ?: '—'),
+            "Email: {$lead->email}",
+            'Organization: '.($lead->organization ?: '—'),
+            'Country: '.($lead->country ?: '—'),
+            "Profile: {$profile}",
+            'Source: '.($lead->source ?: '—'),
+        ]);
+
+        // A mail failure must never lose the lead, which is already saved.
+        try {
+            Mail::raw($body, function ($mail) use ($recipients, $lead) {
+                $mail->to($recipients)
+                    ->replyTo($lead->email, $lead->name ?: $lead->email)
+                    ->subject('EQUINOX · New list registration'.($lead->organization ? ": {$lead->organization}" : ''));
+            });
+        } catch (\Throwable $e) {
+            Log::warning('Lead notification failed', ['id' => $lead->id, 'error' => $e->getMessage()]);
+        }
     }
 
     public function sponsor(Request $request): JsonResponse|RedirectResponse
@@ -83,8 +164,11 @@ class LandingController extends Controller
             'consent.accepted' => 'Please confirm we can contact you about EQUINOX partnerships.',
         ]);
 
+        $email = Str::lower(trim($data['email']));
+
         $inquiry = SponsorInquiry::create($data + [
-            'email' => Str::lower(trim($data['email'])),
+            'email' => $email,
+            'email_hash' => SponsorInquiry::hashEmail($email),
             'consent' => true,
             'ip_address' => $request->ip(),
             'user_agent' => Str::limit((string) $request->userAgent(), 250, ''),

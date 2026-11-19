@@ -6,6 +6,8 @@ use App\Http\Middleware\AdminBasicAuth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index'])->name('home');
+Route::get('/the-event', [LandingController::class, 'theEvent'])->name('event');
+Route::get('/plan-your-visit', [LandingController::class, 'planYourVisit'])->name('plan');
 
 Route::middleware('throttle:10,1')->group(function () {
     Route::post('/join', [LandingController::class, 'joinList'])->name('join');

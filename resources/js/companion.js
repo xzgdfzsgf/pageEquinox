@@ -23,7 +23,8 @@ export function initCompanion() {
     const pos = { x: innerWidth + 60, y: innerHeight * 0.3 };
     const vel = { x: 0, y: 0 };
     const s = { facing: 1, scaleX: 1, tilt: 0, wander: { x: 0, y: 0, until: 0 }, sparkAt: 0, sparkIdx: 0 };
-    let kind = 'hummingbird';
+    // Starts off by default; the visitor can switch the hummingbird on from the dock.
+    let kind = 'off';
     let running = false;
     let last = performance.now();
 
